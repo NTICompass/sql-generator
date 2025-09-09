@@ -8,24 +8,16 @@
 	use CzProject\SqlGenerator\IDriver;
 	use CzProject\SqlGenerator\IStatement;
 
-
 	class Comment implements IStatement
 	{
-		/** @var string */
-		private $comment;
+		private string $comment;
 
-
-		/**
-		 * @param  string $comment
-		 */
-		public function __construct($comment)
+		public function __construct(string $comment)
 		{
 			$this->comment = $comment;
 		}
 
-
-		public function toSql(IDriver $driver)
-		{
+		public function toSql(IDriver $driver): string {
 			return '-- ' . str_replace("\n", "\n-- ", Helpers::normalizeNewLines(trim($this->comment)));
 		}
 	}

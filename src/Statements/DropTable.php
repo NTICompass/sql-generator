@@ -9,24 +9,16 @@
 	use CzProject\SqlGenerator\IStatement;
 	use CzProject\SqlGenerator\TableName;
 
-
 	class DropTable implements IStatement
 	{
-		/** @var string|TableName */
-		private $tableName;
+		private TableName|string $tableName;
 
-
-		/**
-		 * @param  string|TableName $tableName
-		 */
-		public function __construct($tableName)
+		public function __construct(string|TableName $tableName)
 		{
 			$this->tableName = Helpers::createTableName($tableName);
 		}
 
-
-		public function toSql(IDriver $driver)
-		{
+		public function toSql(IDriver $driver): string {
 			return 'DROP TABLE ' . Helpers::escapeTableName($this->tableName, $driver) . ';';
 		}
 	}
