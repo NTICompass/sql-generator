@@ -24,6 +24,8 @@
             'rollback' => 'ROLLBACK TRANSACTION;',
         ];
 
+        private const LAST_ID = 'LAST_INSERT_ROWID()';
+
         public function escapeIdentifier(string $value): string
         {
             return '"'.str_replace('"', '""', $value).'"';
@@ -52,5 +54,9 @@
         public function transaction(string $action): string
         {
             return self::TRANSACTION[$action];
+        }
+
+        public function lastId(): string {
+            return self::LAST_ID;
         }
 	}

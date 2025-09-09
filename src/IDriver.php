@@ -22,4 +22,6 @@
          * @param 'start'|'commit'|'rollback' $action
          */
         public function transaction(string $action): string;
+
+        public function lastId(): string;
 	}

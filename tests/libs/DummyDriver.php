@@ -15,11 +15,13 @@
         /**
          * @var string[]
          */
-        private array $transaction = [
+        private const TRANSACTION = [
             'start' => 'BEGIN;',
             'commit' => 'COMMIT;',
             'rollback' => 'ROLLBACK',
         ];
+
+        private const LAST_ID = 'LAST_INSERT_ID()';
 
 		public function escapeIdentifier(string $value): string
 		{
@@ -56,6 +58,10 @@
 
         public function transaction(string $action): string
         {
-            return $this->transaction[$action];
+            return self::TRANSACTION[$action];
+        }
+
+        public function lastId(): string {
+            return self::LAST_ID;
         }
 	}
