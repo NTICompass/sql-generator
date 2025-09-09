@@ -4,7 +4,7 @@
 
 	namespace CzProject\SqlGenerator;
 
-	class SqlDocument
+    class SqlDocument
 	{
 		/** @var IStatement[] */
 		private array $statements = [];
@@ -69,9 +69,18 @@
 			}
 		}
 
-		/**
-		 * @param array<string, mixed> $data
-		 */
+        /**
+         * @param 'start'|'commit'|'rollback' $action
+         */
+        public function transaction(string $action): Statements\Transaction {
+            $statement = new Statements\Transaction($action);
+            $this->addStatement($statement);
+            return $statement;
+        }
+
+        /**
+         * @param array<string, mixed> $data
+         */
 		public function insert(string|TableName $tableName, array $data): Statements\Insert {
 			$statement = new Statements\Insert($tableName, $data);
 			$this->addStatement($statement);

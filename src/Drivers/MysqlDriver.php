@@ -11,6 +11,15 @@
 	{
         use DateParserTrait;
 
+        /**
+         * @var string[]
+         */
+        private const TRANSACTION = [
+            'start' => 'BEGIN;',
+            'commit' => 'COMMIT;',
+            'rollback' => 'ROLLBACK',
+        ];
+
 		public function escapeIdentifier(string $value): string {
 			// @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
 			// @see http://api.dibiphp.com/2.3.2/source-drivers.DibiMySqlDriver.php.html#307
@@ -42,4 +51,9 @@
 		{
             return $this->dateFormat($value, "'Y-m-d H:i:s'");
 		}
+
+        public function transaction(string $action): string
+        {
+            return self::TRANSACTION[$action];
+        }
 	}

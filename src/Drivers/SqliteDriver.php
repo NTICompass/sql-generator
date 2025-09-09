@@ -15,6 +15,15 @@
 	{
         use DateParserTrait;
 
+        /**
+         * @var string[]
+         */
+        private const TRANSACTION = [
+            'start' => 'BEGIN TRANSACTION;',
+            'commit' => 'COMMIT TRANSACTION;',
+            'rollback' => 'ROLLBACK TRANSACTION;',
+        ];
+
         public function escapeIdentifier(string $value): string
         {
             return '"'.str_replace('"', '""', $value).'"';
@@ -38,5 +47,10 @@
         public function escapeDateTime(DateTimeInterface|string $value): string
         {
             return $this->escapeText($this->dateFormat($value, 'Y-m-d H:i:s'));
+        }
+
+        public function transaction(string $action): string
+        {
+            return self::TRANSACTION[$action];
         }
 	}

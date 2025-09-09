@@ -12,6 +12,15 @@
 	{
         use DateParserTrait;
 
+        /**
+         * @var string[]
+         */
+        private array $transaction = [
+            'start' => 'BEGIN;',
+            'commit' => 'COMMIT;',
+            'rollback' => 'ROLLBACK',
+        ];
+
 		public function escapeIdentifier(string $value): string
 		{
 			// @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
@@ -44,4 +53,9 @@
 		{
             return $this->dateFormat($value, "'Y-m-d H:i:s'");
 		}
+
+        public function transaction(string $action): string
+        {
+            return $this->transaction[$action];
+        }
 	}

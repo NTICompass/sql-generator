@@ -17,4 +17,9 @@
 		public function escapeDate(DateTimeInterface|string $value): string;
 
 		public function escapeDateTime(DateTimeInterface|string $value): string;
+
+        /**
+         * @param 'start'|'commit'|'rollback' $action
+         */
+        public function transaction(string $action): string;
 	}
