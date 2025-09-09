@@ -14,48 +14,37 @@
 		const ASC = 'ASC';
 		const DESC = 'DESC';
 
-		/** @var string */
-		private $name;
+		private string $name;
 
-		/** @var string */
-		private $order;
+		private string $order;
 
-		/** @var int|NULL */
-		private $length;
+		private ?int $length;
 
 
-		/**
-		 * @param  string $name
-		 * @param  string $order
-		 * @param  int|NULL $length
-		 */
-		public function __construct($name, $order = self::ASC, $length = NULL)
+        /**
+         * @throws OutOfRangeException
+         */
+        public function __construct(string $name, string $order = self::ASC, ?int $length = NULL)
 		{
 			$this->name = $name;
 			$this->setOrder($order);
 			$this->length = $length;
 		}
 
-
-		/**
-		 * @param  string $order
-		 * @return static
-		 */
-		private function setOrder($order)
-		{
-			$order = (string) $order;
-
+        /**
+         * @throws OutOfRangeException
+         */
+		private function setOrder(string $order): void
+        {
 			if ($order !== self::ASC && $order !== self::DESC) {
 				throw new OutOfRangeException("Order type '$order' not found.");
 			}
 
 			$this->order = $order;
-			return $this;
-		}
+        }
 
-
-		public function toSql(IDriver $driver)
-		{
+		public function toSql(IDriver $driver): string
+        {
 			$output = $driver->escapeIdentifier($this->name);
 
 			if ($this->length !== NULL) {

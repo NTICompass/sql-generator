@@ -18,32 +18,25 @@
 		const ACTION_CASCADE = 'CASCADE';
 		const ACTION_SET_NULL = 'SET NULL';
 
-		/** @var string */
-		private $name;
+		private string $name;
 
 		/** @var string[] */
-		private $columns;
+		private array $columns;
 
-		/** @var string|TableName */
-		private $targetTable;
+		private TableName|string $targetTable;
 
 		/** @var string[] */
-		private $targetColumns;
+		private array $targetColumns;
 
-		/** @var string */
-		private $onUpdateAction = self::ACTION_RESTRICT;
+		private string $onUpdateAction = self::ACTION_RESTRICT;
 
-		/** @var string */
-		private $onDeleteAction = self::ACTION_RESTRICT;
-
+		private string $onDeleteAction = self::ACTION_RESTRICT;
 
 		/**
-		 * @param  string $name
-		 * @param  string[]|string $columns
-		 * @param  string|TableName $targetTable
-		 * @param  string[]|string $targetColumns
+		 * @param string|string[] $columns
+		 * @param string|string[] $targetColumns
 		 */
-		public function __construct($name, $columns, $targetTable, $targetColumns)
+		public function __construct(string $name, array|string $columns, string|TableName $targetTable, array|string $targetColumns)
 		{
 			$this->name = $name;
 			$this->targetTable = Helpers::createTableName($targetTable);
@@ -66,12 +59,11 @@
 		}
 
 
-		/**
-		 * @param  string $onUpdateAction
-		 * @return static
-		 */
-		public function setOnUpdateAction($onUpdateAction)
-		{
+        /**
+         * @throws OutOfRangeException
+         */
+		public function setOnUpdateAction(string $onUpdateAction): static
+        {
 			if (!$this->validateAction($onUpdateAction)) {
 				throw new OutOfRangeException("Action '$onUpdateAction' is invalid.");
 			}
@@ -81,12 +73,11 @@
 		}
 
 
-		/**
-		 * @param  string $onDeleteAction
-		 * @return static
-		 */
-		public function setOnDeleteAction($onDeleteAction)
-		{
+        /**
+         * @throws OutOfRangeException
+         */
+		public function setOnDeleteAction(string $onDeleteAction): static
+        {
 			if (!$this->validateAction($onDeleteAction)) {
 				throw new OutOfRangeException("Action '$onDeleteAction' is invalid.");
 			}
@@ -96,8 +87,8 @@
 		}
 
 
-		public function toSql(IDriver $driver)
-		{
+		public function toSql(IDriver $driver): string
+        {
 			$output = 'CONSTRAINT ' . $driver->escapeIdentifier($this->name);
 			$output .= ' FOREIGN KEY (';
 			$output .= implode(', ', array_map([$driver, 'escapeIdentifier'], $this->columns));
@@ -109,13 +100,8 @@
 			return $output;
 		}
 
-
-		/**
-		 * @param  string $action
-		 * @return bool
-		 */
-		private function validateAction($action)
-		{
+		private function validateAction(string $action): bool
+        {
 			return $action === self::ACTION_RESTRICT
 				|| $action === self::ACTION_NO_ACTION
 				|| $action === self::ACTION_CASCADE

@@ -16,47 +16,36 @@
 		const TYPE_UNIQUE = 'UNIQUE';
 		const TYPE_FULLTEXT = 'FULLTEXT';
 
-		/** @var string|NULL */
-		private $name;
+		private ?string $name;
 
-		/** @var string */
-		private $type;
+		private string $type;
 
 		/** @var IndexColumnDefinition[] */
-		private $columns = [];
+		private array $columns = [];
 
-
-		/**
-		 * @param  string|NULL $name
-		 * @param  string $type
-		 */
-		public function __construct($name, $type)
+        /**
+         * @throws OutOfRangeException
+         */
+        public function __construct(?string $name, string $type)
 		{
 			$this->name = $name;
 			$this->setType($type);
 		}
 
-
-		/**
-		 * @param  string $column
-		 * @param  string $order
-		 * @param  int|NULL $length
-		 * @return static
-		 */
-		public function addColumn($column, $order = IndexColumnDefinition::ASC, $length = NULL)
-		{
+        /**
+         * @throws OutOfRangeException
+         */
+        public function addColumn(string $column, string $order = IndexColumnDefinition::ASC, ?int $length = NULL): static
+        {
 			$this->columns[] = new IndexColumnDefinition($column, $order, $length);
 			return $this;
 		}
 
-
-		/**
-		 * @param  string $type
-		 * @return void
-		 */
-		private function setType($type)
-		{
-			$type = (string) $type;
+        /**
+         * @throws OutOfRangeException
+         */
+		private function setType(string $type): void
+        {
 			$exists = $type === self::TYPE_INDEX
 				|| $type === self::TYPE_PRIMARY
 				|| $type === self::TYPE_UNIQUE
@@ -69,9 +58,8 @@
 			$this->type = $type;
 		}
 
-
-		public function toSql(IDriver $driver)
-		{
+		public function toSql(IDriver $driver): string
+        {
 			$output = $this->type !== self::TYPE_INDEX ? ($this->type . ' ') : '';
 			$output .= 'KEY';
 

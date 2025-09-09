@@ -7,44 +7,35 @@
 	use CzProject\SqlGenerator\Drivers;
 	use CzProject\SqlGenerator\Helpers;
 	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\InvalidArgumentException;
+    use CzProject\SqlGenerator\IStatement;
 	use CzProject\SqlGenerator\Value;
-
 
 	class ColumnDefinition implements IStatement
 	{
-		/** @var string */
-		private $name;
+		private string $name;
 
-		/** @var string */
-		private $type;
+		private string $type;
 
 		/** @var array<int|float|string> */
-		private $parameters = [];
+		private array $parameters = [];
 
 		/** @var array<string, string|Value|NULL>  [name => value] */
-		private $options = [];
+		private array $options = [];
 
-		/** @var bool */
-		private $nullable = FALSE;
+		private bool $nullable = FALSE;
 
-		/** @var mixed|NULL */
-		private $defaultValue;
+		private mixed $defaultValue;
 
-		/** @var bool */
-		private $autoIncrement = FALSE;
+		private bool $autoIncrement = FALSE;
 
-		/** @var string|NULL */
-		private $comment;
-
+		private ?string $comment;
 
 		/**
-		 * @param  string $name
-		 * @param  string $type
-		 * @param  array<int|float|string>|NULL $parameters
-		 * @param  array<string, string|Value|NULL> $options  [name => value]
+		 * @param array<int|float|string>|NULL $parameters
+		 * @param array<string, string|Value|NULL> $options  [name => value]
 		 */
-		public function __construct($name, $type, ?array $parameters = NULL, array $options = [])
+		public function __construct(string $name, string $type, ?array $parameters = NULL, array $options = [])
 		{
 			$this->name = $name;
 			$this->type = $type;
@@ -52,52 +43,34 @@
 			$this->options = $options;
 		}
 
-
-		/**
-		 * @param  bool $nullable
-		 * @return static
-		 */
-		public function setNullable($nullable = TRUE)
-		{
+		public function setNullable(bool $nullable = TRUE): static
+        {
 			$this->nullable = $nullable;
 			return $this;
 		}
 
-
-		/**
-		 * @param  mixed|NULL $defaultValue
-		 * @return static
-		 */
-		public function setDefaultValue($defaultValue)
-		{
+		public function setDefaultValue(mixed $defaultValue): static
+        {
 			$this->defaultValue = $defaultValue;
 			return $this;
 		}
 
-
-		/**
-		 * @param  bool $autoIncrement
-		 * @return static
-		 */
-		public function setAutoIncrement($autoIncrement = TRUE)
-		{
+		public function setAutoIncrement(bool $autoIncrement = TRUE): static
+        {
 			$this->autoIncrement = $autoIncrement;
 			return $this;
 		}
 
-
-		/**
-		 * @param  string|NULL $comment
-		 * @return static
-		 */
-		public function setComment($comment)
-		{
+		public function setComment(?string $comment): static
+        {
 			$this->comment = $comment;
 			return $this;
 		}
 
-
-		public function toSql(IDriver $driver): string
+        /**
+         * @throws InvalidArgumentException
+         */
+        public function toSql(IDriver $driver): string
 		{
 			$output = $driver->escapeIdentifier($this->name) . ' ' . $this->type;
 
@@ -147,14 +120,11 @@
 			return $output;
 		}
 
-
-		/**
-		 * @param  string $name
-		 * @param  string|Value|NULL $value
-		 * @return string
-		 */
-		private static function formatOption($name, $value, IDriver $driver)
-		{
+        /**
+         * @throws InvalidArgumentException
+         */
+        private static function formatOption(string $name, string|Value|null $value, IDriver $driver): string
+        {
 			if ($value instanceof Value) {
 				$value = $value->toString($driver);
 			}
