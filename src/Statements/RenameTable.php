@@ -11,37 +11,33 @@
 	use CzProject\SqlGenerator\IStatement;
 	use CzProject\SqlGenerator\TableName;
 
-
 	class RenameTable implements IStatement
 	{
-		/** @var string|TableName */
-		private $oldTable;
+		private TableName|string $oldTable;
 
-		/** @var string|TableName */
-		private $newTable;
+		private TableName|string $newTable;
 
-
-		/**
-		 * @param  string|TableName $oldTable
-		 * @param  string|TableName $newTable
-		 */
-		public function __construct($oldTable, $newTable)
+		public function __construct(TableName|string $oldTable, TableName|string $newTable)
 		{
 			$this->oldTable = Helpers::createTableName($oldTable);
 			$this->newTable = Helpers::createTableName($newTable);
 		}
 
+        /**
+         * @throws NotImplementedException
+         */
+        public function toSql(IDriver $driver): string {
+            $oldTable = Helpers::escapeTableName($this->oldTable, $driver);
+            $newTable = Helpers::escapeTableName($this->newTable, $driver);
 
-		public function toSql(IDriver $driver)
-		{
 			if ($driver instanceof Drivers\MysqlDriver) {
-				return 'RENAME TABLE ' . Helpers::escapeTableName($this->oldTable, $driver)
-					. ' TO '
-					. Helpers::escapeTableName($this->newTable, $driver)
-					. ';';
+				return "RENAME TABLE $oldTable TO $newTable;";
 			}
+            elseif ($driver instanceof Drivers\SqliteDriver) {
+                return "ALTER TABLE $oldTable RENAME TO $newTable;";
+            }
 
-			// see http://stackoverflow.com/questions/886786/how-do-i-rename-the-table-name-using-sql-query
+			// @see http://stackoverflow.com/questions/886786/how-do-i-rename-the-table-name-using-sql-query
 			throw new NotImplementedException('Table rename is not implemented for driver ' . get_class($driver) . '.');
 		}
 	}
