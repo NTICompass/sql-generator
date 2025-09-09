@@ -15,6 +15,8 @@
 
         public bool $renameTable = false;
 
+        public bool $renameColumn = false;
+
         /**
          * @var string[]
          */
