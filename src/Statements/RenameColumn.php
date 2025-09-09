@@ -11,17 +11,16 @@
 	use CzProject\SqlGenerator\IStatement;
 	use CzProject\SqlGenerator\TableName;
 
-	class RenameColumn implements IStatement
+	class RenameColumn extends AlterTable
 	{
-		private TableName|string $tableName;
-
         private string $oldColumn;
 
         private string $newColumn;
 
 		public function __construct(TableName|string $tableName, string $oldColumn, string $newColumn)
 		{
-			$this->tableName = Helpers::createTableName($tableName);
+			parent::__construct($tableName);
+
             $this->oldColumn = $oldColumn;
             $this->newColumn = $newColumn;
 		}
@@ -31,12 +30,9 @@
          */
         public function toSql(IDriver $driver): string {
             if ($driver->renameColumn ?? true) {
-                $tableName = Helpers::escapeTableName($this->tableName, $driver);
-                $oldColumn = $driver->escapeIdentifier($this->oldColumn);
-                $newColumn = $driver->escapeIdentifier($this->newColumn);
+                $this->renameColumn($this->oldColumn, $this->newColumn);
 
-                // Works with both SQLite and MySQL/MariaDB
-                return "ALTER TABLE $tableName RENAME COLUMN $oldColumn TO $newColumn;";
+                return parent::toSql($driver);
             }
             else {
                 throw new NotImplementedException('Column rename is not implemented for driver ' . get_class($driver) . '.');

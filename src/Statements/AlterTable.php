@@ -6,140 +6,91 @@
 
 	use CzProject\SqlGenerator\Helpers;
 	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\InvalidArgumentException;
+    use CzProject\SqlGenerator\IStatement;
 	use CzProject\SqlGenerator\TableName;
 	use CzProject\SqlGenerator\Value;
 
-
 	class AlterTable implements IStatement
 	{
-		/** @var string|TableName */
-		private $tableName;
+		private TableName|string $tableName;
 
 		/** @var IStatement[] */
-		private $statements = [];
+		private array $statements = [];
 
-		/** @var string|NULL */
-		private $comment;
+		private ?string $comment;
 
-		/** @var array<string, string|Value>  [name => value] */
-		private $options = [];
+		/** @var array<string, string|Value> [name => value] */
+		private array $options = [];
 
-
-		/**
-		 * @param  string|TableName $tableName
-		 */
-		public function __construct($tableName)
+		public function __construct(string|TableName $tableName)
 		{
 			$this->tableName = Helpers::createTableName($tableName);
 		}
 
+        public function rename(string|TableName $newName): RenameTo {
+            return $this->statements[] = new RenameTo($newName);
+        }
+
+        public function renameColumn(string $oldName, string $newName): RenameColumnTo
+        {
+            return $this->statements[] = new RenameColumnTo($oldName, $newName);
+        }
 
 		/**
-		 * @param  string $name
-		 * @param  string $type
-		 * @param  array<int|float|string> $parameters
-		 * @param  array<string, string|Value|NULL> $options  [name => value]
-		 * @return AddColumn
+		 * @param array<int|float|string> $parameters
+		 * @param array<string, string|Value|NULL> $options  [name => value]
 		 */
-		public function addColumn($name, $type, ?array $parameters = NULL, array $options = [])
-		{
+		public function addColumn(string $name, string $type, ?array $parameters = NULL, array $options = []): AddColumn {
 			return $this->statements[] = new AddColumn($name, $type, $parameters, $options);
 		}
 
-
-		/**
-		 * @param  string $column
-		 * @return DropColumn
-		 */
-		public function dropColumn($column)
-		{
+		public function dropColumn(string $column): DropColumn {
 			return $this->statements[] = new DropColumn($column);
 		}
 
-
 		/**
-		 * @param  string $name
-		 * @param  string $type
-		 * @param  array<int|float|string> $parameters
-		 * @param  array<string, string|Value|NULL> $options  [name => value]
-		 * @return ModifyColumn
+		 * @param array<int|float|string> $parameters
+		 * @param array<string, string|Value|NULL> $options  [name => value]
 		 */
-		public function modifyColumn($name, $type, ?array $parameters = NULL, array $options = [])
-		{
+		public function modifyColumn(string $name, string $type, ?array $parameters = NULL, array $options = []): ModifyColumn {
 			return $this->statements[] = new ModifyColumn($name, $type, $parameters, $options);
 		}
 
-
-		/**
-		 * @param  string|NULL $name
-		 * @param  string $type
-		 * @return AddIndex
-		 */
-		public function addIndex($name, $type)
-		{
+		public function addIndex(?string $name, string $type): AddIndex {
 			return $this->statements[] = new AddIndex($name, $type);
 		}
 
-
-		/**
-		 * @param  string|NULL $index
-		 * @return DropIndex
-		 */
-		public function dropIndex($index)
-		{
+		public function dropIndex(?string $index): DropIndex {
 			return $this->statements[] = new DropIndex($index);
 		}
 
-
 		/**
-		 * @param  string $name
-		 * @param  string[]|string $columns
-		 * @param  string|TableName $targetTable
-		 * @param  string[]|string $targetColumns
-		 * @return AddForeignKey
+		 * @param string|string[] $columns
+		 * @param string|string[] $targetColumns
 		 */
-		public function addForeignKey($name, $columns, $targetTable, $targetColumns)
-		{
+		public function addForeignKey(string $name, array|string $columns, string|TableName $targetTable, array|string $targetColumns): AddForeignKey {
 			return $this->statements[] = new AddForeignKey($name, $columns, $targetTable, $targetColumns);
 		}
 
-
-		/**
-		 * @param  string $foreignKey
-		 * @return DropForeignKey
-		 */
-		public function dropForeignKey($foreignKey)
-		{
+		public function dropForeignKey(string $foreignKey): DropForeignKey {
 			return $this->statements[] = new DropForeignKey($foreignKey);
 		}
 
-
-		/**
-		 * @param  string|NULL $comment
-		 * @return static
-		 */
-		public function setComment($comment)
-		{
+		public function setComment(?string $comment): static {
 			$this->comment = $comment;
 			return $this;
 		}
 
-
-		/**
-		 * @param  string $name
-		 * @param  string|Value $value
-		 * @return static
-		 */
-		public function setOption($name, $value)
-		{
+		public function setOption(string $name, string|Value $value): static {
 			$this->options[$name] = $value;
 			return $this;
 		}
 
-
-		public function toSql(IDriver $driver)
-		{
+        /**
+         * @throws InvalidArgumentException
+         */
+        public function toSql(IDriver $driver): string {
 			if (empty($this->statements) && empty($this->options) && !isset($this->comment)) {
 				return '';
 			}

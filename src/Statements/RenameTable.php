@@ -11,15 +11,14 @@
 	use CzProject\SqlGenerator\IStatement;
 	use CzProject\SqlGenerator\TableName;
 
-	class RenameTable implements IStatement
+	class RenameTable extends AlterTable
 	{
-		private TableName|string $oldTable;
-
 		private TableName|string $newTable;
 
 		public function __construct(TableName|string $oldTable, TableName|string $newTable)
 		{
-			$this->oldTable = Helpers::createTableName($oldTable);
+            parent::__construct($oldTable);
+
 			$this->newTable = Helpers::createTableName($newTable);
 		}
 
@@ -28,11 +27,9 @@
          */
         public function toSql(IDriver $driver): string {
             if ($driver->renameTable ?? true) {
-                $oldTable = Helpers::escapeTableName($this->oldTable, $driver);
-                $newTable = Helpers::escapeTableName($this->newTable, $driver);
+                $this->rename($this->newTable);
 
-                // Works with both SQLite and MySQL/MariaDB
-                return "ALTER TABLE $oldTable RENAME TO $newTable;";
+                return parent::toSql($driver);
             }
             else {
                 // @see http://stackoverflow.com/questions/886786/how-do-i-rename-the-table-name-using-sql-query
