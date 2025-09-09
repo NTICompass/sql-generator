@@ -17,7 +17,7 @@
         private const TRANSACTION = [
             'start' => 'BEGIN;',
             'commit' => 'COMMIT;',
-            'rollback' => 'ROLLBACK',
+            'rollback' => 'ROLLBACK;',
         ];
 
         private const LAST_ID = 'LAST_INSERT_ID()';
