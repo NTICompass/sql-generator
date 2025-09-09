@@ -4,37 +4,36 @@
 
 	namespace CzProject\SqlGenerator;
 
+    use DateTimeInterface;
+    use Stringable;
 
 	class Value
 	{
-		/** @var scalar|\Stringable|\DateTimeInterface */
-		private $value;
+		/** @var scalar|Stringable|DateTimeInterface */
+		private int|float|bool|string|Stringable|DateTimeInterface $value;
 
 
 		/**
-		 * @param scalar|\Stringable|\DateTimeInterface $value
+		 * @param scalar|Stringable|DateTimeInterface $value
 		 */
-		public function __construct($value)
+		public function __construct(int|float|bool|string|Stringable|DateTimeInterface $value)
 		{
 			$this->value = $value;
 		}
 
 
-		/**
-		 * @return string
-		 */
-		public function toString(IDriver $driver)
-		{
+        /**
+         * @throws InvalidArgumentException
+         */
+		public function toString(IDriver $driver): string {
 			return Helpers::formatValue($this->value, $driver);
 		}
 
 
 		/**
-		 * @param  scalar|\Stringable|\DateTimeInterface $value
-		 * @return self
+		 * @param scalar|Stringable|DateTimeInterface $value
 		 */
-		public static function create($value)
-		{
+		public static function create(int|float|bool|string|Stringable|DateTimeInterface $value): self {
 			return new self($value);
 		}
 	}

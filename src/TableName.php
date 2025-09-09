@@ -4,12 +4,10 @@
 
 	namespace CzProject\SqlGenerator;
 
-
 	class TableName
 	{
 		/** @var string[] */
-		private $parts;
-
+		private array $parts;
 
 		/**
 		 * @param string ...$parts
@@ -19,12 +17,7 @@
 			$this->parts = $parts;
 		}
 
-
-		/**
-		 * @return string
-		 */
-		public function toString(IDriver $driver)
-		{
+		public function toString(IDriver $driver): string {
 			$res = [];
 
 			foreach ($this->parts as $part) {
@@ -34,13 +27,7 @@
 			return implode('.', $res);
 		}
 
-
-		/**
-		 * @param  string $name
-		 * @return self
-		 */
-		public static function create($name)
-		{
+		public static function create(string $name): self {
 			$parts = explode('.', $name);
 			return new self(...$parts);
 		}
