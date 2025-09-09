@@ -62,9 +62,4 @@
         public function lastId(): string {
             return self::LAST_ID;
         }
-
-        public function renameTable(string $oldTable, string $newTable): string
-        {
-            return "RENAME TABLE $oldTable TO $newTable;";
-        }
 	}

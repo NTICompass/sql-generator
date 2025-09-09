@@ -13,6 +13,8 @@
 	{
         use DateParserTrait;
 
+        public bool $renameTable = false;
+
         /**
          * @var string[]
          */
@@ -64,10 +66,5 @@
 
         public function lastId(): string {
             return self::LAST_ID;
-        }
-
-        public function renameTable(string $oldTable, string $newTable): string
-        {
-            throw new NotImplementedException('Dummy driver cannot rename tables.');
         }
 	}

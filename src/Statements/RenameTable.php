@@ -27,14 +27,16 @@
          * @throws NotImplementedException
          */
         public function toSql(IDriver $driver): string {
-            try {
+            if ($driver->renameTable ?? true) {
                 $oldTable = Helpers::escapeTableName($this->oldTable, $driver);
                 $newTable = Helpers::escapeTableName($this->newTable, $driver);
 
-                return $driver->renameTable($oldTable, $newTable);
-            } catch (NotImplementedException $e) {
+                // Works with both SQLite and MySQL/MariaDB
+                return "ALTER TABLE $oldTable RENAME TO $newTable;";
+            }
+            else {
                 // @see http://stackoverflow.com/questions/886786/how-do-i-rename-the-table-name-using-sql-query
-                throw new NotImplementedException('Table rename is not implemented for driver ' . get_class($driver) . '.', previous: $e);
+                throw new NotImplementedException('Table rename is not implemented for driver ' . get_class($driver) . '.');
             }
 		}
 	}
