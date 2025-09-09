@@ -5,9 +5,7 @@
 	namespace CzProject\SqlGenerator\Drivers;
 
 	use CzProject\SqlGenerator\IDriver;
-    use DateTimeImmutable;
     use DateTimeInterface;
-    use Exception;
     use SQLite3;
 
     /**
@@ -15,6 +13,8 @@
      */
 	class SqliteDriver implements IDriver
 	{
+        use DateParserTrait;
+
         public function escapeIdentifier(string $value): string
         {
             return '"'.str_replace('"', '""', $value).'"';
@@ -32,27 +32,11 @@
 
         public function escapeDate(DateTimeInterface|string $value): string
         {
-            if (!($value instanceof DateTimeInterface)) {
-                try {
-                    $value = new DateTimeImmutable($value);
-                } catch (Exception $e) {
-                    return '';
-                }
-            }
-
-            return $this->escapeText($value->format('Y-m-d'));
+            return $this->escapeText($this->dateFormat($value, 'Y-m-d'));
         }
 
         public function escapeDateTime(DateTimeInterface|string $value): string
         {
-            if (!($value instanceof DateTimeInterface)) {
-                try {
-                    $value = new DateTimeImmutable($value);
-                } catch (Exception $e) {
-                    return '';
-                }
-            }
-
-            return $this->escapeText($value->format('Y-m-d H:i:s'));
+            return $this->escapeText($this->dateFormat($value, 'Y-m-d H:i:s'));
         }
 	}

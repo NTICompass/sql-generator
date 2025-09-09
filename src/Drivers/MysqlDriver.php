@@ -6,11 +6,11 @@
 
 	use CzProject\SqlGenerator\IDriver;
     use DateTimeInterface;
-    use DateTimeImmutable;
-    use Exception;
 
     class MysqlDriver implements IDriver
 	{
+        use DateParserTrait;
+
 		public function escapeIdentifier(string $value): string {
 			// @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
 			// @see http://api.dibiphp.com/2.3.2/source-drivers.DibiMySqlDriver.php.html#307
@@ -35,27 +35,11 @@
 
 		public function escapeDate(DateTimeInterface|string $value): string
 		{
-			if (!($value instanceof \DateTimeInterface)) {
-                try {
-                    $value = new DateTimeImmutable($value);
-                } catch (Exception $e) {
-                    return '';
-                }
-			}
-
-			return $value->format("'Y-m-d'");
+            return $this->dateFormat($value, "'Y-m-d'");
 		}
 
 		public function escapeDateTime(DateTimeInterface|string $value): string
 		{
-			if (!($value instanceof DateTimeInterface)) {
-                try {
-                    $value = new DateTimeImmutable($value);
-                } catch (Exception $e) {
-                    return '';
-                }
-			}
-
-			return $value->format("'Y-m-d H:i:s'");
+            return $this->dateFormat($value, "'Y-m-d H:i:s'");
 		}
 	}

@@ -4,13 +4,14 @@
 
 	namespace Tests;
 
+	use CzProject\SqlGenerator\Drivers\DateParserTrait;
 	use CzProject\SqlGenerator\IDriver;
-    use DateTimeImmutable;
     use DateTimeInterface;
-    use Exception;
 
     class DummyDriver implements IDriver
 	{
+        use DateParserTrait;
+
 		public function escapeIdentifier(string $value): string
 		{
 			// @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
@@ -36,27 +37,11 @@
 
 		public function escapeDate(DateTimeInterface|string $value): string
 		{
-            if (!($value instanceof DateTimeInterface)) {
-                try {
-                    $value = new DateTimeImmutable($value);
-                } catch (Exception $e) {
-                    return '';
-                }
-            }
-
-			return $value->format("'Y-m-d'");
+            return $this->dateFormat($value, "'Y-m-d'");
 		}
 
 		public function escapeDateTime(DateTimeInterface|string $value): string
 		{
-            if (!($value instanceof DateTimeInterface)) {
-                try {
-                    $value = new DateTimeImmutable($value);
-                } catch (Exception $e) {
-                    return '';
-                }
-            }
-
-			return $value->format("'Y-m-d H:i:s'");
+            return $this->dateFormat($value, "'Y-m-d H:i:s'");
 		}
 	}
