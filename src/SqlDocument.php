@@ -87,6 +87,16 @@
 			return $statement;
 		}
 
+        /**
+         * @param array<string, mixed> $data
+         * @param array<string, string> $where
+         */
+        public function update(string|TableName $tableName, array $data, array $where): Statements\Update {
+            $statement = new Statements\Update($tableName, $data, $where);
+            $this->addStatement($statement);
+            return $statement;
+        }
+
 		public function createTable(string|TableName $tableName): Statements\CreateTable {
 			$statement = new Statements\CreateTable($tableName);
 			$this->addStatement($statement);
