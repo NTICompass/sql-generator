@@ -97,7 +97,7 @@
 		}
 
 
-		public function toSql(IDriver $driver)
+		public function toSql(IDriver $driver): string
 		{
 			$output = $driver->escapeIdentifier($this->name) . ' ' . $this->type;
 

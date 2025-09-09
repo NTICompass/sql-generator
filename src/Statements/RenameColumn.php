@@ -39,7 +39,6 @@
                 return "ALTER TABLE $tableName RENAME COLUMN $oldColumn TO $newColumn;";
             }
             else {
-                // @see http://stackoverflow.com/questions/886786/how-do-i-rename-the-table-name-using-sql-query
                 throw new NotImplementedException('Column rename is not implemented for driver ' . get_class($driver) . '.');
             }
 		}

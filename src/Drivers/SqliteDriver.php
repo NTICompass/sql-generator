@@ -15,6 +15,8 @@
 	{
         use DateParserTrait;
 
+        public bool $modifyColumn = false;
+
         /**
          * @var string[]
          */
