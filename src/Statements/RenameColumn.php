@@ -4,11 +4,9 @@
 
 	namespace CzProject\SqlGenerator\Statements;
 
-	use CzProject\SqlGenerator\Drivers;
 	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\Helpers;
-	use CzProject\SqlGenerator\NotImplementedException;
-	use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\InvalidArgumentException;
+    use CzProject\SqlGenerator\NotImplementedException;
 	use CzProject\SqlGenerator\TableName;
 
 	class RenameColumn extends AlterTable
@@ -26,7 +24,7 @@
 		}
 
         /**
-         * @throws NotImplementedException
+         * @throws NotImplementedException|InvalidArgumentException
          */
         public function toSql(IDriver $driver): string {
             if ($driver->renameColumn ?? true) {
