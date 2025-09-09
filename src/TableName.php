@@ -17,7 +17,8 @@
 			$this->parts = $parts;
 		}
 
-		public function toString(IDriver $driver): string {
+		public function toString(IDriver $driver): string
+        {
 			$res = [];
 
 			foreach ($this->parts as $part) {
@@ -27,7 +28,8 @@
 			return implode('.', $res);
 		}
 
-		public static function create(string $name): self {
+		public static function create(string $name): self
+        {
 			$parts = explode('.', $name);
 			return new self(...$parts);
 		}

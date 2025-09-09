@@ -25,7 +25,8 @@
         /**
          * @throws InvalidArgumentException
          */
-		public function toString(IDriver $driver): string {
+		public function toString(IDriver $driver): string
+        {
 			return Helpers::formatValue($this->value, $driver);
 		}
 
@@ -33,7 +34,8 @@
 		/**
 		 * @param scalar|Stringable|DateTimeInterface $value
 		 */
-		public static function create(int|float|bool|string|Stringable|DateTimeInterface $value): self {
+		public static function create(int|float|bool|string|Stringable|DateTimeInterface $value): self
+        {
 			return new self($value);
 		}
 	}
