@@ -6,6 +6,12 @@
 
 	use DateTimeInterface;
 
+    /**
+     * A few additional properties can be set to control the driver's capabilities:
+     *  - `public bool $renameTable`
+     *  - `public bool $renameColumn`
+     *  - `public bool $modifyColumn`
+     */
     interface IDriver
 	{
 		public function escapeIdentifier(string $value): string;
