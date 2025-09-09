@@ -5,19 +5,19 @@
 	namespace CzProject\SqlGenerator\Drivers;
 
 	use CzProject\SqlGenerator\IDriver;
+    use DateTimeInterface;
+    use DateTimeImmutable;
+    use Exception;
 
-
-	class MysqlDriver implements IDriver
+    class MysqlDriver implements IDriver
 	{
-		public function escapeIdentifier($value)
-		{
+		public function escapeIdentifier(string $value): string {
 			// @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
 			// @see http://api.dibiphp.com/2.3.2/source-drivers.DibiMySqlDriver.php.html#307
 			return '`' . str_replace('`', '``', $value) . '`';
 		}
 
-
-		public function escapeText($value)
+		public function escapeText(string $value): string
 		{
 			// https://dev.mysql.com/doc/refman/5.5/en/string-literals.html
 			// http://us3.php.net/manual/en/function.mysql-real-escape-string.php#101248
@@ -28,27 +28,34 @@
 			) . '\'';
 		}
 
-
-		public function escapeBool($value)
+		public function escapeBool(bool $value): string
 		{
 			return $value ? '1' : '0';
 		}
 
-
-		public function escapeDate($value)
+		public function escapeDate(DateTimeInterface|string $value): string
 		{
-			if (!($value instanceof \DateTime) && !($value instanceof \DateTimeInterface)) {
-				$value = new \DateTime($value);
+			if (!($value instanceof \DateTimeInterface)) {
+                try {
+                    $value = new DateTimeImmutable($value);
+                } catch (Exception $e) {
+                    return '';
+                }
 			}
+
 			return $value->format("'Y-m-d'");
 		}
 
-
-		public function escapeDateTime($value)
+		public function escapeDateTime(DateTimeInterface|string $value): string
 		{
-			if (!($value instanceof \DateTime) && !($value instanceof \DateTimeInterface)) {
-				$value = new \DateTime($value);
+			if (!($value instanceof DateTimeInterface)) {
+                try {
+                    $value = new DateTimeImmutable($value);
+                } catch (Exception $e) {
+                    return '';
+                }
 			}
+
 			return $value->format("'Y-m-d H:i:s'");
 		}
 	}

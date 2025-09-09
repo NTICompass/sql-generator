@@ -4,36 +4,17 @@
 
 	namespace CzProject\SqlGenerator;
 
+	use DateTimeInterface;
 
-	interface IDriver
+    interface IDriver
 	{
-		/**
-		 * @param  string $value
-		 * @return string
-		 */
-		function escapeIdentifier($value);
+		public function escapeIdentifier(string $value): string;
 
-		/**
-		 * @param  string $value
-		 * @return string
-		 */
-		function escapeText($value);
+		public function escapeText(string $value): string;
 
-		/**
-		 * @param  bool $value
-		 * @return string
-		 */
-		function escapeBool($value);
+		public function escapeBool(bool $value): string;
 
-		/**
-		 * @param  string|\DateTime|\DateTimeInterface $value
-		 * @return string
-		 */
-		function escapeDate($value);
+		public function escapeDate(DateTimeInterface|string $value): string;
 
-		/**
-		 * @param  string|\DateTime|\DateTimeInterface $value
-		 * @return string
-		 */
-		function escapeDateTime($value);
+		public function escapeDateTime(DateTimeInterface|string $value): string;
 	}

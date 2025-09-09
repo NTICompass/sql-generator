@@ -15,42 +15,42 @@
      */
 	class SqliteDriver implements IDriver
 	{
-        public function escapeIdentifier($value): string
+        public function escapeIdentifier(string $value): string
         {
             return '"'.str_replace('"', '""', $value).'"';
         }
 
-        public function escapeText($value): string
+        public function escapeText(string $value): string
         {
             return "'".SQLite3::escapeString($value)."'";
         }
 
-        public function escapeBool($value): string
+        public function escapeBool(bool $value): string
         {
             return strval($value ? 1 : 0);
         }
 
-        /**
-         * @param DateTimeInterface|string $value
-         * @throws Exception
-         */
-        public function escapeDate($value): string
+        public function escapeDate(DateTimeInterface|string $value): string
         {
             if (!($value instanceof DateTimeInterface)) {
-                $value = new DateTimeImmutable($value);
+                try {
+                    $value = new DateTimeImmutable($value);
+                } catch (Exception $e) {
+                    return '';
+                }
             }
 
             return $this->escapeText($value->format('Y-m-d'));
         }
 
-        /**
-         * @param DateTimeInterface|string $value
-         * @throws Exception
-         */
-        public function escapeDateTime($value): string
+        public function escapeDateTime(DateTimeInterface|string $value): string
         {
             if (!($value instanceof DateTimeInterface)) {
-                $value = new DateTimeImmutable($value);
+                try {
+                    $value = new DateTimeImmutable($value);
+                } catch (Exception $e) {
+                    return '';
+                }
             }
 
             return $this->escapeText($value->format('Y-m-d H:i:s'));
