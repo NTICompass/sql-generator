@@ -24,4 +24,9 @@
         public function transaction(string $action): string;
 
         public function lastId(): string;
+
+        /**
+         * @throws NotImplementedException
+         */
+        public function renameTable(string $oldTable, string $newTable): string;
 	}

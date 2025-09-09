@@ -7,24 +7,16 @@
 	use CzProject\SqlGenerator\IDriver;
 	use CzProject\SqlGenerator\IStatement;
 
-
 	class SqlCommand implements IStatement
 	{
-		/** @var string */
-		private $command;
+		private string $command;
 
-
-		/**
-		 * @param  string $command
-		 */
-		public function __construct($command)
+		public function __construct(string $command)
 		{
 			$this->command = $command;
 		}
 
-
-		public function toSql(IDriver $driver)
-		{
+		public function toSql(IDriver $driver): string {
 			return rtrim($this->command, ';') . ';';
 		}
 	}

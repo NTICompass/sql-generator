@@ -6,6 +6,7 @@
 
 	use CzProject\SqlGenerator\Drivers\DateParserTrait;
 	use CzProject\SqlGenerator\IDriver;
+    use CzProject\SqlGenerator\NotImplementedException;
     use DateTimeInterface;
 
     class DummyDriver implements IDriver
@@ -63,5 +64,10 @@
 
         public function lastId(): string {
             return self::LAST_ID;
+        }
+
+        public function renameTable(string $oldTable, string $newTable): string
+        {
+            throw new NotImplementedException('Dummy driver cannot rename tables.');
         }
 	}
