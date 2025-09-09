@@ -6,8 +6,9 @@
 
 	use CzProject\SqlGenerator\IDriver;
 	use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\NotImplementedException;
 
-	class DropForeignKey implements IStatement
+    class DropForeignKey implements IStatement
 	{
 		private string $foreignKey;
 
@@ -17,8 +18,16 @@
 		}
 
 
-		public function toSql(IDriver $driver): string
+        /**
+         * @throws NotImplementedException
+         */
+        public function toSql(IDriver $driver): string
         {
-			return 'DROP FOREIGN KEY ' . $driver->escapeIdentifier($this->foreignKey);
+            if ($driver->modifyColumn ?? true) {
+                return 'DROP FOREIGN KEY ' . $driver->escapeIdentifier($this->foreignKey);
+            }
+            else {
+                throw new NotImplementedException('Drop key is not implemented for driver ' . get_class($driver) . '.');
+            }
 		}
 	}

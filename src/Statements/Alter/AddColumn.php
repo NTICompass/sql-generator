@@ -78,12 +78,14 @@
         {
 			$output = 'ADD COLUMN ' . $this->definition->toSql($driver);
 
-			if ($this->position === self::POSITION_FIRST) {
-				$output .= ' FIRST';
-
-			} elseif ($this->position !== self::POSITION_LAST) {
-				$output .= ' AFTER ' . $driver->escapeIdentifier($this->position);
-			}
+            if ($driver->modifyColumn ?? true) {
+                if ($this->position === self::POSITION_FIRST) {
+                    $output .= ' FIRST';
+                }
+                elseif ($this->position !== self::POSITION_LAST) {
+                    $output .= ' AFTER ' . $driver->escapeIdentifier($this->position);
+                }
+            }
 
 			return $output;
 		}

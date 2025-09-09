@@ -6,6 +6,7 @@
 
 	use CzProject\SqlGenerator\IDriver;
 	use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\NotImplementedException;
     use CzProject\SqlGenerator\OutOfRangeException;
 
     class AddIndex implements IStatement
@@ -26,8 +27,16 @@
 			return $this;
 		}
 
-		public function toSql(IDriver $driver): string
+        /**
+         * @throws NotImplementedException
+         */
+        public function toSql(IDriver $driver): string
         {
-			return 'ADD ' . $this->definition->toSql($driver);
+            if ($driver->modifyColumn ?? true) {
+                return 'ADD ' . $this->definition->toSql($driver);
+            }
+            else {
+                throw new NotImplementedException('Add key is not implemented for driver ' . get_class($driver) . '.');
+            }
 		}
 	}
