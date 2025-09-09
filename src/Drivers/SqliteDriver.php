@@ -58,7 +58,8 @@
             return self::TRANSACTION[$action];
         }
 
-        public function lastId(): string {
+        public function lastId(): string
+        {
             return self::LAST_ID;
         }
 	}

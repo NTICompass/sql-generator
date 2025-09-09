@@ -29,7 +29,8 @@
         /**
          * @throws InvalidArgumentException
          */
-        public function toSql(IDriver $driver): string {
+        public function toSql(IDriver $driver): string
+        {
             try {
                 $tableName = Helpers::escapeTableName($this->tableName, $driver);
                 $fields = implode(',', array_map(static fn (string $field) => $driver->escapeIdentifier($field), array_keys($this->data)));

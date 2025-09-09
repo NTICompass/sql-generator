@@ -26,7 +26,8 @@
         /**
          * @throws NotImplementedException|InvalidArgumentException
          */
-        public function toSql(IDriver $driver): string {
+        public function toSql(IDriver $driver): string
+        {
             if ($driver->renameColumn ?? true) {
                 $this->renameColumn($this->oldColumn, $this->newColumn);
 

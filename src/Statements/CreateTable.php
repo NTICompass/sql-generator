@@ -7,50 +7,46 @@
 	use CzProject\SqlGenerator\DuplicateException;
 	use CzProject\SqlGenerator\Helpers;
 	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
-	use CzProject\SqlGenerator\TableName;
+    use CzProject\SqlGenerator\InvalidArgumentException;
+    use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\OutOfRangeException;
+    use CzProject\SqlGenerator\TableName;
 	use CzProject\SqlGenerator\Value;
 
 
 	class CreateTable implements IStatement
 	{
-		/** @var string|TableName */
-		private $tableName;
+		private TableName|string $tableName;
 
 		/** @var array<string, ColumnDefinition>  [name => ColumnDefinition] */
-		private $columns = [];
+		private array $columns = [];
 
 		/** @var array<string, IndexDefinition>  [name => IndexDefinition] */
-		private $indexes = [];
+		private array $indexes = [];
 
 		/** @var array<string, ForeignKeyDefinition>  [name => ForeignKeyDefinition] */
-		private $foreignKeys = [];
+		private array $foreignKeys = [];
 
-		/** @var string|NULL */
-		private $comment;
+		private ?string $comment;
 
 		/** @var array<string, string|Value>  [name => value] */
-		private $options = [];
-
+		private array $options = [];
 
 		/**
-		 * @param  string|TableName $tableName
+		 * @param string|TableName $tableName
 		 */
-		public function __construct($tableName)
+		public function __construct(string|TableName $tableName)
 		{
 			$this->tableName = Helpers::createTableName($tableName);
 		}
 
-
-		/**
-		 * @param  string $name
-		 * @param  string $type
-		 * @param  array<int|float|string>|NULL $parameters
-		 * @param  array<string, string|Value|NULL> $options
-		 * @return ColumnDefinition
-		 */
-		public function addColumn($name, $type, ?array $parameters = NULL, array $options = [])
-		{
+        /**
+         * @param array<int|float|string>|NULL $parameters
+         * @param array<string, string|Value|NULL> $options
+         * @throws DuplicateException
+         */
+		public function addColumn(string $name, string $type, ?array $parameters = NULL, array $options = []): ColumnDefinition
+        {
 			if (isset($this->columns[$name])) {
 				throw new DuplicateException("Column '$name' already exists.");
 			}
@@ -58,14 +54,11 @@
 			return $this->columns[$name] = new ColumnDefinition($name, $type, $parameters, $options);
 		}
 
-
-		/**
-		 * @param  string|NULL $name
-		 * @param  string $type
-		 * @return IndexDefinition
-		 */
-		public function addIndex($name, $type)
-		{
+        /**
+         * @throws DuplicateException|OutOfRangeException
+         */
+		public function addIndex(?string $name, string $type): IndexDefinition
+        {
 			if (isset($this->indexes[$name])) {
 				throw new DuplicateException("Index '$name' already exists.");
 			}
@@ -73,16 +66,13 @@
 			return $this->indexes[$name] = new IndexDefinition($name, $type);
 		}
 
-
-		/**
-		 * @param  string $name
-		 * @param  string[]|string $columns
-		 * @param  string|TableName $targetTable
-		 * @param  string[]|string $targetColumns
-		 * @return ForeignKeyDefinition
-		 */
-		public function addForeignKey($name, $columns, $targetTable, $targetColumns)
-		{
+        /**
+         * @param string|string[] $columns
+         * @param string|string[] $targetColumns
+         * @throws DuplicateException
+         */
+		public function addForeignKey(string $name, array|string $columns, string|TableName $targetTable, array|string $targetColumns): ForeignKeyDefinition
+        {
 			if (isset($this->foreignKeys[$name])) {
 				throw new DuplicateException("Foreign key '$name' already exists.");
 			}
@@ -90,32 +80,24 @@
 			return $this->foreignKeys[$name] = new ForeignKeyDefinition($name, $columns, $targetTable, $targetColumns);
 		}
 
-
-		/**
-		 * @param  string|NULL $comment
-		 * @return static
-		 */
-		public function setComment($comment)
-		{
+		public function setComment(?string $comment): static
+        {
 			$this->comment = $comment;
 			return $this;
 		}
 
-
-		/**
-		 * @param  string $name
-		 * @param  string|Value $value
-		 * @return static
-		 */
-		public function setOption($name, $value)
-		{
+		public function setOption(string $name, string|Value $value): static
+        {
 			$this->options[$name] = $value;
 			return $this;
 		}
 
 
-		public function toSql(IDriver $driver)
-		{
+        /**
+         * @throws InvalidArgumentException
+         */
+        public function toSql(IDriver $driver): string
+        {
 			$output = 'CREATE TABLE ' . Helpers::escapeTableName($this->tableName, $driver) . " (\n";
 
 			// columns

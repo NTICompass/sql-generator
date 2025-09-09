@@ -7,24 +7,17 @@
 	use CzProject\SqlGenerator\IDriver;
 	use CzProject\SqlGenerator\IStatement;
 
-
 	class DropColumn implements IStatement
 	{
-		/** @var string */
-		private $column;
+		private string $column;
 
-
-		/**
-		 * @param  string $column
-		 */
-		public function __construct($column)
+		public function __construct(string $column)
 		{
 			$this->column = $column;
 		}
 
-
-		public function toSql(IDriver $driver)
-		{
+		public function toSql(IDriver $driver): string
+        {
 			return 'DROP COLUMN ' . $driver->escapeIdentifier($this->column);
 		}
 	}

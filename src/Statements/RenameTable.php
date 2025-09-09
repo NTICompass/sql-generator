@@ -24,7 +24,8 @@
         /**
          * @throws NotImplementedException|InvalidArgumentException
          */
-        public function toSql(IDriver $driver): string {
+        public function toSql(IDriver $driver): string
+        {
             if ($driver->renameTable ?? true) {
                 $this->rename($this->newTable);
 

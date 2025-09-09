@@ -7,24 +7,18 @@
 	use CzProject\SqlGenerator\IDriver;
 	use CzProject\SqlGenerator\IStatement;
 
-
 	class DropForeignKey implements IStatement
 	{
-		/** @var string */
-		private $foreignKey;
+		private string $foreignKey;
 
-
-		/**
-		 * @param  string $foreignKey
-		 */
-		public function __construct($foreignKey)
+		public function __construct(string $foreignKey)
 		{
 			$this->foreignKey = $foreignKey;
 		}
 
 
-		public function toSql(IDriver $driver)
-		{
+		public function toSql(IDriver $driver): string
+        {
 			return 'DROP FOREIGN KEY ' . $driver->escapeIdentifier($this->foreignKey);
 		}
 	}

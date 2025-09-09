@@ -6,39 +6,28 @@
 
 	use CzProject\SqlGenerator\IDriver;
 	use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\OutOfRangeException;
 
-
-	class AddIndex implements IStatement
+    class AddIndex implements IStatement
 	{
-		/** @var IndexDefinition */
-		private $definition;
+		private IndexDefinition $definition;
 
-
-		/**
-		 * @param  string|NULL $name
-		 * @param  string $type
-		 */
-		public function __construct($name, $type)
+        /**
+         * @throws OutOfRangeException
+         */
+		public function __construct(?string $name, string $type)
 		{
 			$this->definition = new IndexDefinition($name, $type);
 		}
 
-
-		/**
-		 * @param  string $column
-		 * @param  string $order
-		 * @param  int|NULL $length
-		 * @return static
-		 */
-		public function addColumn($column, $order = IndexColumnDefinition::ASC, $length = NULL)
-		{
+		public function addColumn(string $column, string $order = IndexColumnDefinition::ASC, ?int $length = NULL): static
+        {
 			$this->definition->addColumn($column, $order, $length);
 			return $this;
 		}
 
-
-		public function toSql(IDriver $driver)
-		{
+		public function toSql(IDriver $driver): string
+        {
 			return 'ADD ' . $this->definition->toSql($driver);
 		}
 	}

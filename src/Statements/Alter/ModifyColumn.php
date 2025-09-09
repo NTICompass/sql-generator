@@ -5,7 +5,8 @@
 	namespace CzProject\SqlGenerator\Statements;
 
 	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\InvalidArgumentException;
+    use CzProject\SqlGenerator\IStatement;
     use CzProject\SqlGenerator\NotImplementedException;
     use CzProject\SqlGenerator\Value;
 
@@ -27,43 +28,50 @@
 			$this->definition = new ColumnDefinition($name, $type, $parameters, $options);
 		}
 
-		public function moveToFirstPosition(): static {
+		public function moveToFirstPosition(): static
+        {
 			$this->position = self::POSITION_FIRST;
 			return $this;
 		}
 
-		public function moveAfterColumn(string $column): static {
+		public function moveAfterColumn(string $column): static
+        {
 			$this->position = $column;
 			return $this;
 		}
 
-		public function moveToLastPosition(): static {
+		public function moveToLastPosition(): static
+        {
 			$this->position = self::POSITION_LAST;
 			return $this;
 		}
 
-		public function setNullable(bool $nullable = TRUE): static {
+		public function setNullable(bool $nullable = TRUE): static
+        {
 			$this->definition->setNullable($nullable);
 			return $this;
 		}
 
-		public function setDefaultValue(mixed $defaultValue): static {
+		public function setDefaultValue(mixed $defaultValue): static
+        {
 			$this->definition->setDefaultValue($defaultValue);
 			return $this;
 		}
 
-		public function setAutoIncrement(bool $autoIncrement = TRUE): static {
+		public function setAutoIncrement(bool $autoIncrement = TRUE): static
+        {
 			$this->definition->setAutoIncrement($autoIncrement);
 			return $this;
 		}
 
-		public function setComment(?string $comment): static {
+		public function setComment(?string $comment): static
+        {
 			$this->definition->setComment($comment);
 			return $this;
 		}
 
         /**
-         * @throws NotImplementedException
+         * @throws NotImplementedException|InvalidArgumentException
          */
         public function toSql(IDriver $driver): string
 		{

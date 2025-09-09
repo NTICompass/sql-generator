@@ -17,7 +17,8 @@
 			$this->comment = $comment;
 		}
 
-		public function toSql(IDriver $driver): string {
+		public function toSql(IDriver $driver): string
+        {
 			return '-- ' . str_replace("\n", "\n-- ", Helpers::normalizeNewLines(trim($this->comment)));
 		}
 	}

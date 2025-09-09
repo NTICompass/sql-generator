@@ -16,7 +16,8 @@
 			$this->command = $command;
 		}
 
-		public function toSql(IDriver $driver): string {
+		public function toSql(IDriver $driver): string
+        {
 			return rtrim($this->command, ';') . ';';
 		}
 	}

@@ -18,7 +18,8 @@
 			$this->tableName = Helpers::createTableName($tableName);
 		}
 
-		public function toSql(IDriver $driver): string {
+		public function toSql(IDriver $driver): string
+        {
 			return 'DROP TABLE ' . Helpers::escapeTableName($this->tableName, $driver) . ';';
 		}
 	}

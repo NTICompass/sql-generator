@@ -5,111 +5,77 @@
 	namespace CzProject\SqlGenerator\Statements;
 
 	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\InvalidArgumentException;
+    use CzProject\SqlGenerator\IStatement;
 	use CzProject\SqlGenerator\Value;
-
 
 	class AddColumn implements IStatement
 	{
 		const POSITION_FIRST = TRUE;
 		const POSITION_LAST = FALSE;
 
-		/** @var ColumnDefinition */
-		private $definition;
+		private ColumnDefinition $definition;
 
-		/** @var string|bool */
-		private $position = self::POSITION_LAST;
+		private string|bool $position = self::POSITION_LAST;
 
 
 		/**
-		 * @param  string $name
-		 * @param  string $type
-		 * @param  array<int|float|string> $parameters
-		 * @param  array<string, string|Value|NULL> $options  [name => value]
+		 * @param array<int|float|string> $parameters
+		 * @param array<string, string|Value|NULL> $options  [name => value]
 		 */
-		public function __construct($name, $type, ?array $parameters = NULL, array $options = [])
+		public function __construct(string $name, string $type, ?array $parameters = NULL, array $options = [])
 		{
 			$this->definition = new ColumnDefinition($name, $type, $parameters, $options);
 		}
 
-
-		/**
-		 * @return static
-		 */
-		public function moveToFirstPosition()
-		{
+		public function moveToFirstPosition(): static
+        {
 			$this->position = self::POSITION_FIRST;
 			return $this;
 		}
 
-
-		/**
-		 * @param  string $column
-		 * @return static
-		 */
-		public function moveAfterColumn($column)
-		{
+		public function moveAfterColumn(string $column): static
+        {
 			$this->position = $column;
 			return $this;
 		}
 
-
-		/**
-		 * @return static
-		 */
-		public function moveToLastPosition()
-		{
+		public function moveToLastPosition(): static
+        {
 			$this->position = self::POSITION_LAST;
 			return $this;
 		}
 
-
-		/**
-		 * @param  bool $nullable
-		 * @return static
-		 */
-		public function setNullable($nullable = TRUE)
-		{
+		public function setNullable(bool $nullable = TRUE): static
+        {
 			$this->definition->setNullable($nullable);
 			return $this;
 		}
 
-
-		/**
-		 * @param  mixed|NULL $defaultValue
-		 * @return static
-		 */
-		public function setDefaultValue($defaultValue)
-		{
+		public function setDefaultValue(mixed $defaultValue): static
+        {
 			$this->definition->setDefaultValue($defaultValue);
 			return $this;
 		}
 
-
-		/**
-		 * @param  bool $autoIncrement
-		 * @return static
-		 */
-		public function setAutoIncrement($autoIncrement = TRUE)
-		{
+		public function setAutoIncrement(bool $autoIncrement = TRUE): static
+        {
 			$this->definition->setAutoIncrement($autoIncrement);
 			return $this;
 		}
 
-
-		/**
-		 * @param  string|NULL $comment
-		 * @return static
-		 */
-		public function setComment($comment)
-		{
+		public function setComment(?string $comment): static
+        {
 			$this->definition->setComment($comment);
 			return $this;
 		}
 
 
-		public function toSql(IDriver $driver)
-		{
+        /**
+         * @throws InvalidArgumentException
+         */
+        public function toSql(IDriver $driver): string
+        {
 			$output = 'ADD COLUMN ' . $this->definition->toSql($driver);
 
 			if ($this->position === self::POSITION_FIRST) {

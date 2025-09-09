@@ -6,51 +6,46 @@
 
 	use CzProject\SqlGenerator\IDriver;
 	use CzProject\SqlGenerator\IStatement;
-	use CzProject\SqlGenerator\TableName;
-
+    use CzProject\SqlGenerator\OutOfRangeException;
+    use CzProject\SqlGenerator\TableName;
 
 	class AddForeignKey implements IStatement
 	{
-		/** @var ForeignKeyDefinition */
-		private $definition;
+		private ForeignKeyDefinition $definition;
 
 
 		/**
-		 * @param  string $name
-		 * @param  string[]|string $columns
-		 * @param  string|TableName $targetTable
-		 * @param  string[]|string $targetColumns
+		 * @param string|string[] $columns
+		 * @param string|string[] $targetColumns
 		 */
-		public function __construct($name, $columns, $targetTable, $targetColumns)
+		public function __construct(string $name, array|string $columns, string|TableName $targetTable, array|string $targetColumns)
 		{
 			$this->definition = new ForeignKeyDefinition($name, $columns, $targetTable, $targetColumns);
 		}
 
 
-		/**
-		 * @param  string $onUpdateAction
-		 * @return static
-		 */
-		public function setOnUpdateAction($onUpdateAction)
-		{
+        /**
+         * @throws OutOfRangeException
+         */
+		public function setOnUpdateAction(string $onUpdateAction): static
+        {
 			$this->definition->setOnUpdateAction($onUpdateAction);
 			return $this;
 		}
 
 
-		/**
-		 * @param  string $onDeleteAction
-		 * @return static
-		 */
-		public function setOnDeleteAction($onDeleteAction)
-		{
+        /**
+         * @throws OutOfRangeException
+         */
+		public function setOnDeleteAction(string $onDeleteAction): static
+        {
 			$this->definition->setOnDeleteAction($onDeleteAction);
 			return $this;
 		}
 
 
-		public function toSql(IDriver $driver)
-		{
+		public function toSql(IDriver $driver): string
+        {
 			return 'ADD ' . $this->definition->toSql($driver);
 		}
 	}
