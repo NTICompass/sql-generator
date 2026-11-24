@@ -12,7 +12,7 @@ function test(callable $cb): void
 
 function normalize(string $sql): string
 {
-    return ltrim(trim(preg_replace('@\s+@', ' ', $sql) ?? $sql));
+    return trim(preg_replace('@\s+@', ' ', $sql) ?? $sql);
 }
 
 function prepareTempDir(): string
