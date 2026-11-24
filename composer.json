@@ -13,16 +13,24 @@
 		{"type": "other", "url": "https://www.janpecha.cz/donate/"}
 	],
 	"require": {
-		"php": "8.0 - 8.4"
+		"php": ">=8.0"
 	},
 	"autoload": {
 		"classmap": ["src/"]
 	},
 	"require-dev": {
 		"nette/tester": "^2.5",
-		"phpstan/phpstan": "^2.1"
+		"phpstan/extension-installer": "^1.4",
+		"phpstan/phpstan": "^2.1",
+		"phpstan/phpstan-strict-rules": "^2.1",
+		"nepada/phpstan-nette-tester": "^2.1"
 	},
     "suggest": {
         "ext-sqlite3": "For SQLite driver"
-    }
+    },
+	"config": {
+		"allow-plugins": {
+			"phpstan/extension-installer": true
+		}
+	}
 }

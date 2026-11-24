@@ -3,7 +3,7 @@ tester_bin = vendor/bin/tester
 tests_dir = tests/
 coverage_name = $(tests_dir)coverage.html
 php_bin = php
-phpstan_bin = phpstan
+phpstan_bin = vendor/bin/phpstan
 
 .PHONY: test coverage clean phpstan
 test:
@@ -16,4 +16,4 @@ clean:
 		@rm -f $(coverage_name)
 
 phpstan:
-		@$(phpstan_bin)
+		@$(phpstan_bin) analyse --memory-limit=3G
