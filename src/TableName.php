@@ -17,7 +17,7 @@
 			$this->parts = $parts;
 		}
 
-		public function toString(IDriver $driver): string
+		public function toString(Driver $driver): string
         {
 			$res = [];
 

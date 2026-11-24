@@ -4,10 +4,10 @@
 
 	namespace CzProject\SqlGenerator\Statements;
 
-	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+	use CzProject\SqlGenerator\Driver;
+	use CzProject\SqlGenerator\Statement;
 
-	class DropColumn implements IStatement
+	class DropColumn implements Statement
 	{
 		private string $column;
 
@@ -16,7 +16,7 @@
 			$this->column = $column;
 		}
 
-		public function toSql(IDriver $driver): string
+		public function toSql(Driver $driver): string
         {
 			return 'DROP COLUMN ' . $driver->escapeIdentifier($this->column);
 		}

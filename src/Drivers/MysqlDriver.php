@@ -4,10 +4,10 @@
 
 	namespace CzProject\SqlGenerator\Drivers;
 
-	use CzProject\SqlGenerator\IDriver;
+	use CzProject\SqlGenerator\Driver;
     use DateTimeInterface;
 
-    class MysqlDriver implements IDriver
+    class MysqlDriver implements Driver
 	{
         use DateParserTrait;
 

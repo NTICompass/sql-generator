@@ -4,14 +4,14 @@
 
 	namespace CzProject\SqlGenerator\Drivers;
 
-	use CzProject\SqlGenerator\IDriver;
+	use CzProject\SqlGenerator\Driver;
     use DateTimeInterface;
     use SQLite3;
 
     /**
      * @see https://sqlite.org/lang_keywords.html
      */
-	class SqliteDriver implements IDriver
+	class SqliteDriver implements Driver
 	{
         use DateParserTrait;
 

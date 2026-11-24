@@ -4,12 +4,12 @@
 
 	namespace CzProject\SqlGenerator\Statements;
 
-	use CzProject\SqlGenerator\IDriver;
+	use CzProject\SqlGenerator\Driver;
     use CzProject\SqlGenerator\InvalidArgumentException;
-    use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\Statement;
 	use CzProject\SqlGenerator\Value;
 
-	class AddColumn implements IStatement
+	class AddColumn implements Statement
 	{
 		const POSITION_FIRST = TRUE;
 		const POSITION_LAST = FALSE;
@@ -74,7 +74,7 @@
         /**
          * @throws InvalidArgumentException
          */
-        public function toSql(IDriver $driver): string
+        public function toSql(Driver $driver): string
         {
 			$output = 'ADD COLUMN ' . $this->definition->toSql($driver);
 

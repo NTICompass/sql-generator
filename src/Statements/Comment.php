@@ -5,10 +5,10 @@
 	namespace CzProject\SqlGenerator\Statements;
 
 	use CzProject\SqlGenerator\Helpers;
-	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+	use CzProject\SqlGenerator\Driver;
+	use CzProject\SqlGenerator\Statement;
 
-	class Comment implements IStatement
+	class Comment implements Statement
 	{
 		private string $comment;
 
@@ -17,7 +17,7 @@
 			$this->comment = $comment;
 		}
 
-		public function toSql(IDriver $driver): string
+		public function toSql(Driver $driver): string
         {
 			return '-- ' . str_replace("\n", "\n-- ", Helpers::normalizeNewLines(trim($this->comment)));
 		}

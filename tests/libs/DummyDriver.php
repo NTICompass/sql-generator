@@ -5,11 +5,11 @@
 	namespace Tests;
 
 	use CzProject\SqlGenerator\Drivers\DateParserTrait;
-	use CzProject\SqlGenerator\IDriver;
+	use CzProject\SqlGenerator\Driver;
     use CzProject\SqlGenerator\NotImplementedException;
     use DateTimeInterface;
 
-    class DummyDriver implements IDriver
+    class DummyDriver implements Driver
 	{
         use DateParserTrait;
 

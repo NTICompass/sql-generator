@@ -6,12 +6,12 @@
 
 	use CzProject\SqlGenerator\Drivers;
 	use CzProject\SqlGenerator\Helpers;
-	use CzProject\SqlGenerator\IDriver;
+	use CzProject\SqlGenerator\Driver;
     use CzProject\SqlGenerator\InvalidArgumentException;
-    use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\Statement;
 	use CzProject\SqlGenerator\Value;
 
-	class ColumnDefinition implements IStatement
+	class ColumnDefinition implements Statement
 	{
 		private string $name;
 
@@ -70,7 +70,7 @@
         /**
          * @throws InvalidArgumentException
          */
-        public function toSql(IDriver $driver): string
+        public function toSql(Driver $driver): string
 		{
 			$output = $driver->escapeIdentifier($this->name) . ' ' . $this->type;
 
@@ -123,7 +123,7 @@
         /**
          * @throws InvalidArgumentException
          */
-        private static function formatOption(string $name, string|Value|null $value, IDriver $driver): string
+        private static function formatOption(string $name, string|Value|null $value, Driver $driver): string
         {
 			if ($value instanceof Value) {
 				$value = $value->toString($driver);

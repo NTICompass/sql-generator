@@ -12,7 +12,7 @@
      *  - `public bool $renameColumn`
      *  - `public bool $modifyColumn`
      */
-    interface IDriver
+    interface Driver
 	{
 		public function escapeIdentifier(string $value): string;
 

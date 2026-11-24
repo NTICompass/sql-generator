@@ -5,11 +5,11 @@
 	namespace CzProject\SqlGenerator\Statements;
 
 	use CzProject\SqlGenerator\Helpers;
-    use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\Driver;
+	use CzProject\SqlGenerator\Statement;
     use CzProject\SqlGenerator\TableName;
 
-	class RenameColumnTo implements IStatement
+	class RenameColumnTo implements Statement
 	{
         private string $oldName;
 
@@ -21,7 +21,7 @@
             $this->newName = $newName;
         }
 
-		public function toSql(IDriver $driver): string
+		public function toSql(Driver $driver): string
 		{
             $oldName = $driver->escapeIdentifier($this->oldName);
             $newName = $driver->escapeIdentifier($this->newName);

@@ -8,10 +8,10 @@
 
     class SqlDocument
 	{
-		/** @var IStatement[] */
+		/** @var Statement[] */
 		private array $statements = [];
 
-		public function addStatement(IStatement $statement): static
+		public function addStatement(Statement $statement): static
         {
 			$this->statements[] = $statement;
 			return $this;
@@ -25,7 +25,7 @@
 		/**
 		 * @return string[]
 		 */
-		public function getSqlQueries(IDriver $driver): array
+		public function getSqlQueries(Driver $driver): array
         {
 			$output = [];
 
@@ -36,7 +36,7 @@
 			return $output;
 		}
 
-		public function toSql(IDriver $driver): string
+		public function toSql(Driver $driver): string
         {
 			$output = '';
 			$first = TRUE;
@@ -59,7 +59,7 @@
 		/**
 		 * @throws IOException
 		 */
-		public function save(string $file, IDriver $driver): void
+		public function save(string $file, Driver $driver): void
         {
 			// create directory
 			$dir = dirname($file);

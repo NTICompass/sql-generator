@@ -5,18 +5,18 @@
 	namespace CzProject\SqlGenerator\Statements;
 
 	use CzProject\SqlGenerator\Helpers;
-	use CzProject\SqlGenerator\IDriver;
+	use CzProject\SqlGenerator\Driver;
     use CzProject\SqlGenerator\InvalidArgumentException;
-    use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\Statement;
     use CzProject\SqlGenerator\OutOfRangeException;
     use CzProject\SqlGenerator\TableName;
 	use CzProject\SqlGenerator\Value;
 
-	class AlterTable implements IStatement
+	class AlterTable implements Statement
 	{
 		private TableName|string $tableName;
 
-		/** @var IStatement[] */
+		/** @var Statement[] */
 		private array $statements = [];
 
 		private ?string $comment;
@@ -104,7 +104,7 @@
         /**
          * @throws InvalidArgumentException
          */
-        public function toSql(IDriver $driver): string
+        public function toSql(Driver $driver): string
         {
 			if ($this->statements === [] && $this->options === [] && !isset($this->comment)) {
 				return '';

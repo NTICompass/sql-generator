@@ -5,11 +5,11 @@
 	namespace CzProject\SqlGenerator\Statements;
 
 	use CzProject\SqlGenerator\OutOfRangeException;
-	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+	use CzProject\SqlGenerator\Driver;
+	use CzProject\SqlGenerator\Statement;
 
 
-	class IndexDefinition implements IStatement
+	class IndexDefinition implements Statement
 	{
 		const TYPE_INDEX = 'INDEX';
 		const TYPE_PRIMARY = 'PRIMARY';
@@ -58,7 +58,7 @@
 			$this->type = $type;
 		}
 
-		public function toSql(IDriver $driver): string
+		public function toSql(Driver $driver): string
         {
 			$output = $this->type !== self::TYPE_INDEX ? ($this->type . ' ') : '';
 			$output .= 'KEY';

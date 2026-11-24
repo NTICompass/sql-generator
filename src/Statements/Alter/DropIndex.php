@@ -5,11 +5,11 @@
 	namespace CzProject\SqlGenerator\Statements;
 
 	use CzProject\SqlGenerator\Drivers;
-	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+	use CzProject\SqlGenerator\Driver;
+	use CzProject\SqlGenerator\Statement;
     use CzProject\SqlGenerator\NotImplementedException;
 
-    class DropIndex implements IStatement
+    class DropIndex implements Statement
 	{
 		private ?string $index;
 
@@ -22,7 +22,7 @@
         /**
          * @throws NotImplementedException
          */
-        public function toSql(IDriver $driver): string
+        public function toSql(Driver $driver): string
         {
             if ($driver->modifyColumn ?? true) {
                 if ($this->index === NULL) { // PRIMARY KEY

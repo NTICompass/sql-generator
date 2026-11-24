@@ -4,13 +4,13 @@
 
 	namespace CzProject\SqlGenerator\Statements;
 
-	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+	use CzProject\SqlGenerator\Driver;
+	use CzProject\SqlGenerator\Statement;
     use CzProject\SqlGenerator\NotImplementedException;
     use CzProject\SqlGenerator\OutOfRangeException;
     use CzProject\SqlGenerator\TableName;
 
-	class AddForeignKey implements IStatement
+	class AddForeignKey implements Statement
 	{
 		private ForeignKeyDefinition $definition;
 
@@ -48,7 +48,7 @@
         /**
          * @throws NotImplementedException
          */
-        public function toSql(IDriver $driver): string
+        public function toSql(Driver $driver): string
         {
             if ($driver->modifyColumn ?? true) {
                 return 'ADD ' . $this->definition->toSql($driver);

@@ -5,11 +5,11 @@
 	namespace CzProject\SqlGenerator\Statements;
 
 	use CzProject\SqlGenerator\OutOfRangeException;
-	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+	use CzProject\SqlGenerator\Driver;
+	use CzProject\SqlGenerator\Statement;
 
 
-	class IndexColumnDefinition implements IStatement
+	class IndexColumnDefinition implements Statement
 	{
 		const ASC = 'ASC';
 		const DESC = 'DESC';
@@ -43,7 +43,7 @@
 			$this->order = $order;
         }
 
-		public function toSql(IDriver $driver): string
+		public function toSql(Driver $driver): string
         {
 			$output = $driver->escapeIdentifier($this->name);
 

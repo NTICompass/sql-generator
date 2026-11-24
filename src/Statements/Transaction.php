@@ -4,10 +4,10 @@
 
     namespace CzProject\SqlGenerator\Statements;
 
-    use CzProject\SqlGenerator\IDriver;
-    use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\Driver;
+    use CzProject\SqlGenerator\Statement;
 
-    class Transaction implements IStatement
+    class Transaction implements Statement
     {
         /**
          * @var 'start'|'commit'|'rollback'
@@ -22,7 +22,7 @@
             $this->action = $action;
         }
 
-        public function toSql(IDriver $driver): string
+        public function toSql(Driver $driver): string
         {
             return $driver->transaction($this->action);
         }

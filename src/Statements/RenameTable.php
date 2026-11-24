@@ -4,7 +4,7 @@
 
 	namespace CzProject\SqlGenerator\Statements;
 
-	use CzProject\SqlGenerator\IDriver;
+	use CzProject\SqlGenerator\Driver;
 	use CzProject\SqlGenerator\Helpers;
 	use CzProject\SqlGenerator\NotImplementedException;
     use CzProject\SqlGenerator\InvalidArgumentException;
@@ -24,7 +24,7 @@
         /**
          * @throws NotImplementedException|InvalidArgumentException
          */
-        public function toSql(IDriver $driver): string
+        public function toSql(Driver $driver): string
         {
             if ($driver->renameTable ?? true) {
                 $this->rename($this->newTable);

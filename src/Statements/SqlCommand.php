@@ -4,10 +4,10 @@
 
 	namespace CzProject\SqlGenerator\Statements;
 
-	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+	use CzProject\SqlGenerator\Driver;
+	use CzProject\SqlGenerator\Statement;
 
-	class SqlCommand implements IStatement
+	class SqlCommand implements Statement
 	{
 		private string $command;
 
@@ -16,7 +16,7 @@
 			$this->command = $command;
 		}
 
-		public function toSql(IDriver $driver): string
+		public function toSql(Driver $driver): string
         {
 			return rtrim($this->command, ';') . ';';
 		}

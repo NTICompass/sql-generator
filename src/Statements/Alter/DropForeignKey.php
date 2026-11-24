@@ -4,11 +4,11 @@
 
 	namespace CzProject\SqlGenerator\Statements;
 
-	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+	use CzProject\SqlGenerator\Driver;
+	use CzProject\SqlGenerator\Statement;
     use CzProject\SqlGenerator\NotImplementedException;
 
-    class DropForeignKey implements IStatement
+    class DropForeignKey implements Statement
 	{
 		private string $foreignKey;
 
@@ -21,7 +21,7 @@
         /**
          * @throws NotImplementedException
          */
-        public function toSql(IDriver $driver): string
+        public function toSql(Driver $driver): string
         {
             if ($driver->modifyColumn ?? true) {
                 return 'DROP FOREIGN KEY ' . $driver->escapeIdentifier($this->foreignKey);

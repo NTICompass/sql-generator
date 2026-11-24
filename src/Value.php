@@ -25,7 +25,7 @@
         /**
          * @throws InvalidArgumentException
          */
-		public function toString(IDriver $driver): string
+		public function toString(Driver $driver): string
         {
 			return Helpers::formatValue($this->value, $driver);
 		}

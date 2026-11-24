@@ -4,7 +4,7 @@
 
 	namespace CzProject\SqlGenerator;
 
-	interface IStatement
+	interface Statement
 	{
-		public function toSql(IDriver $driver): string;
+		public function toSql(Driver $driver): string;
 	}

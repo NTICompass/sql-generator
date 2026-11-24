@@ -20,7 +20,7 @@
          * @throws InvalidArgumentException
          * @see https://api.dibiphp.com/3.0/source-Dibi.Translator.php.html#174
          */
-		public static function formatValue(mixed $value, IDriver $driver): string
+		public static function formatValue(mixed $value, Driver $driver): string
         {
 			if (is_string($value)) {
 				return $driver->escapeText($value);
@@ -44,7 +44,7 @@
 			throw new InvalidArgumentException("Unsupported value type.");
 		}
 
-		public static function escapeTableName(TableName|string $tableName, IDriver $driver): string
+		public static function escapeTableName(TableName|string $tableName, Driver $driver): string
         {
 			if ($tableName instanceof TableName) {
 				return $tableName->toString($driver);

@@ -6,12 +6,12 @@
 
 	use CzProject\SqlGenerator\Helpers;
 	use CzProject\SqlGenerator\OutOfRangeException;
-	use CzProject\SqlGenerator\IDriver;
-	use CzProject\SqlGenerator\IStatement;
+	use CzProject\SqlGenerator\Driver;
+	use CzProject\SqlGenerator\Statement;
 	use CzProject\SqlGenerator\TableName;
 
 
-	class ForeignKeyDefinition implements IStatement
+	class ForeignKeyDefinition implements Statement
 	{
 		const ACTION_RESTRICT = 'RESTRICT';
 		const ACTION_NO_ACTION = 'NO ACTION';
@@ -87,7 +87,7 @@
 		}
 
 
-		public function toSql(IDriver $driver): string
+		public function toSql(Driver $driver): string
         {
 			$output = 'CONSTRAINT ' . $driver->escapeIdentifier($this->name);
 			$output .= ' FOREIGN KEY (';

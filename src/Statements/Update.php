@@ -5,12 +5,12 @@
 	namespace CzProject\SqlGenerator\Statements;
 
 	use CzProject\SqlGenerator\Helpers;
-	use CzProject\SqlGenerator\IDriver;
+	use CzProject\SqlGenerator\Driver;
     use CzProject\SqlGenerator\InvalidArgumentException;
-    use CzProject\SqlGenerator\IStatement;
+    use CzProject\SqlGenerator\Statement;
 	use CzProject\SqlGenerator\TableName;
 
-	class Update implements IStatement
+	class Update implements Statement
 	{
 		private string|TableName $tableName;
 
@@ -34,7 +34,7 @@
         /**
          * @throws InvalidArgumentException
          */
-        public function toSql(IDriver $driver): string
+        public function toSql(Driver $driver): string
 		{
             try {
                 $tableName = Helpers::escapeTableName($this->tableName, $driver);
