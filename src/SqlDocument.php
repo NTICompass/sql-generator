@@ -19,7 +19,7 @@
 
 		public function isEmpty(): bool
         {
-			return empty($this->statements);
+			return $this->statements === [];
 		}
 
 		/**

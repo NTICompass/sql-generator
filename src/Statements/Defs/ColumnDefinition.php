@@ -74,7 +74,7 @@
 		{
 			$output = $driver->escapeIdentifier($this->name) . ' ' . $this->type;
 
-			if (!empty($this->parameters)) {
+			if ($this->parameters !== []) {
 				$parameters = $this->parameters;
 				array_walk($parameters, function (&$value) use ($driver) {
 					$value = Helpers::formatValue($value, $driver);

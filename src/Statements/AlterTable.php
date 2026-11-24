@@ -106,7 +106,7 @@
          */
         public function toSql(IDriver $driver): string
         {
-			if (empty($this->statements) && empty($this->options) && !isset($this->comment)) {
+			if ($this->statements === [] && $this->options === [] && !isset($this->comment)) {
 				return '';
 			}
 

@@ -55,7 +55,7 @@
 
 		public static function createTableName(TableName|string $tableName): TableName|string
         {
-			if (is_string($tableName) && strpos($tableName, '.')) {
+			if (is_string($tableName) && str_contains($tableName, '.')) {
 				return TableName::create($tableName);
 			}
 
