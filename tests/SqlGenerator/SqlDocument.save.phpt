@@ -20,7 +20,7 @@ test(static function () {
 	$sql->command('SET NAMES "utf8mb4"');
 	$sql->save($file, $driver);
 
-	Assert::same('SET NAMES "utf8mb4";', normalize(file_get_contents($file)));
+	Assert::same('SET NAMES "utf8mb4";', normalize(file_get_contents($file) ?: ''));
 });
 
 

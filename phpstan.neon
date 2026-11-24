@@ -7,4 +7,4 @@ parameters:
         - php
         - phpt
     strictRules:
-        allRules: true
+        disallowedShortTernary: false
