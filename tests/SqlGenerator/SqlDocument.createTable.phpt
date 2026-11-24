@@ -1,18 +1,18 @@
 <?php
-
 declare(strict_types=1);
 
 use CzProject\SqlGenerator\Drivers;
+use CzProject\SqlGenerator\DuplicateException;
 use CzProject\SqlGenerator\SqlDocument;
+use CzProject\SqlGenerator\Statements\ColumnDefinition;
+use CzProject\SqlGenerator\Statements\ForeignKeyDefinition;
 use CzProject\SqlGenerator\Statements\IndexDefinition;
 use CzProject\SqlGenerator\Value;
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
-
-test(function () {
-
+test(static function () {
 	$sql = new SqlDocument;
 	$driver = new Drivers\MysqlDriver;
 
@@ -47,74 +47,62 @@ test(function () {
 
 	$contactTable->addForeignKey('fk_creator', 'creator_id', 'user', 'id');
 
-	Assert::same(implode("\n", [
-		'CREATE TABLE `contact` (',
-		"\t`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,",
-		"\t`name` VARCHAR(100) NOT NULL COMMENT 'Client name',",
-		"\t`surname` VARCHAR(100) NOT NULL,",
-		"\t`active` TINYINT(1) UNSIGNED MYOPTION 'abc' NOT NULL DEFAULT 1,",
-		"\t`status` ENUM('new', 'verified') NOT NULL DEFAULT 'new',",
-		"\t`created` DATETIME NOT NULL,",
-		"\t`removed` DATETIME NULL,",
-		"\tPRIMARY KEY (`id`),",
-		"\tUNIQUE KEY `name_surname` (`name` (100), `surname` (100) DESC),",
-		"\tCONSTRAINT `fk_creator` FOREIGN KEY (`creator_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT",
-		')',
-		'COMMENT \'Clients table.\'',
-		'AUTO_INCREMENT=123',
-		'CHECKSUM=0',
-		'COMPRESSION=\'NONE\'',
-		'ENGINE=InnoDB;',
-		'',
-	]), $sql->toSql($driver));
-
+	Assert::same(normalize(<<<'SQL'
+        CREATE TABLE `contact` (
+            `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            `name` VARCHAR(100) NOT NULL COMMENT 'Client name',
+            `surname` VARCHAR(100) NOT NULL,
+            `active` TINYINT(1) UNSIGNED MYOPTION 'abc' NOT NULL DEFAULT 1,
+            `status` ENUM('new', 'verified') NOT NULL DEFAULT 'new',
+            `created` DATETIME NOT NULL,
+            `removed` DATETIME NULL,
+            PRIMARY KEY (`id`),
+            UNIQUE KEY `name_surname` (`name` (100), `surname` (100) DESC),
+            CONSTRAINT `fk_creator` FOREIGN KEY (`creator_id`) REFERENCES `user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+        )
+        COMMENT 'Clients table.'
+        AUTO_INCREMENT=123
+        CHECKSUM=0
+        COMPRESSION='NONE'
+        ENGINE=InnoDB;
+    SQL), normalize($sql->toSql($driver)));
 });
 
-
-test(function () {
-
+test(static function () {
 	$sql = new SqlDocument;
-	$driver = new Drivers\MysqlDriver;
 
 	$contactTable = $sql->createTable('contact');
 	$contactTable->addColumn('name', 'VARCHAR(100)');
 
-	Assert::exception(function () use ($contactTable) {
-
-		$contactTable->addColumn('name', 'VARCHAR(50)');
-
-	}, \CzProject\SqlGenerator\DuplicateException::class, "Column 'name' already exists.");
-
+	Assert::exception(
+        static fn (): ColumnDefinition => $contactTable->addColumn('name', 'VARCHAR(50)'),
+        DuplicateException::class,
+        "Column 'name' already exists.",
+    );
 });
 
-
-test(function () {
-
+test(static function () {
 	$sql = new SqlDocument;
 
 	$contactTable = $sql->createTable('contact');
 	$contactTable->addIndex('name', 'INDEX');
 
-	Assert::exception(function () use ($contactTable) {
-
-		$contactTable->addIndex('name', 'INDEX');
-
-	}, \CzProject\SqlGenerator\DuplicateException::class, "Index 'name' already exists.");
-
+	Assert::exception(
+        static fn (): IndexDefinition => $contactTable->addIndex('name', 'INDEX'),
+        DuplicateException::class,
+        "Index 'name' already exists.",
+    );
 });
 
-
-test(function () {
-
+test(static function () {
 	$sql = new SqlDocument;
 
 	$contactTable = $sql->createTable('contact');
 	$contactTable->addForeignKey('fk_person', 'person_id', 'person', 'id');
 
-	Assert::exception(function () use ($contactTable) {
-
-		$contactTable->addForeignKey('fk_person', 'person_id', 'person', 'id');
-
-	}, \CzProject\SqlGenerator\DuplicateException::class, "Foreign key 'fk_person' already exists.");
-
+	Assert::exception(
+        static fn (): ForeignKeyDefinition => $contactTable->addForeignKey('fk_person', 'person_id', 'person', 'id'),
+        DuplicateException::class,
+        "Foreign key 'fk_person' already exists.",
+    );
 });

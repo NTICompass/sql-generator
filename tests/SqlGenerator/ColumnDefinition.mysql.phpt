@@ -1,22 +1,22 @@
 <?php
-
 declare(strict_types=1);
 
 use CzProject\SqlGenerator\Drivers;
 use CzProject\SqlGenerator\Statements\ColumnDefinition;
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/../libs/DummyDriver.php';
+require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../libs/DummyDriver.php';
 
-
-test(function () {
-
+test(static function () {
 	$column = new ColumnDefinition('name', 'VARCHAR', [100], [
 		'OPTION' => 'option_value',
 		'COLLATE' => 'latin2_general_ci',
 		'CHARACTER SET' => 'latin2',
 	]);
-	Assert::same('`name` VARCHAR(100) CHARACTER SET latin2 COLLATE latin2_general_ci OPTION option_value NOT NULL', $column->toSql(new Drivers\MysqlDriver));
 
+	Assert::same(
+        '`name` VARCHAR(100) CHARACTER SET latin2 COLLATE latin2_general_ci OPTION option_value NOT NULL',
+        $column->toSql(new Drivers\MysqlDriver)
+    );
 });

@@ -1,15 +1,12 @@
 <?php
-
 declare(strict_types=1);
 
 use CzProject\SqlGenerator\SqlDocument;
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
-
-test(function () {
-
+test(static function () {
 	$sql = new SqlDocument;
 	Assert::true($sql->isEmpty());
 

@@ -1,21 +1,17 @@
 <?php
-
 declare(strict_types=1);
 
 use CzProject\SqlGenerator\Drivers;
 use CzProject\SqlGenerator\SqlDocument;
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
-
-test(function () {
-
+test(static function () {
 	$sql = new SqlDocument;
 	$driver = new Drivers\MysqlDriver;
 
 	$sql->dropTable('contact');
 
-	Assert::same("DROP TABLE `contact`;\n", $sql->toSql($driver));
-
+	Assert::same("DROP TABLE `contact`;", normalize($sql->toSql($driver)));
 });

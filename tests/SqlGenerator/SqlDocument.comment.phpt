@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 use CzProject\SqlGenerator\Drivers;
@@ -7,11 +6,9 @@ use CzProject\SqlGenerator\SqlDocument;
 use CzProject\SqlGenerator\Statements\IndexDefinition;
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
-
-test(function () {
-
+test(static function () {
 	$sql = new SqlDocument;
 	$driver = new Drivers\MysqlDriver;
 
@@ -27,5 +24,4 @@ test(function () {
 		'-- block comment #3',
 		'',
 	]), $sql->toSql($driver));
-
 });

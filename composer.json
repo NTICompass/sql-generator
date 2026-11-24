@@ -19,6 +19,7 @@
 		"classmap": ["src/"]
 	},
 	"require-dev": {
+		"ext-xdebug": "*",
 		"nette/tester": "^2.5",
 		"phpstan/extension-installer": "^1.4",
 		"phpstan/phpstan": "^2.1",

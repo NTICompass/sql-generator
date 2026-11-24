@@ -33,10 +33,10 @@
         {
             try {
                 $tableName = Helpers::escapeTableName($this->tableName, $driver);
-                $fields = implode(',', array_map(static fn (string $field) => $driver->escapeIdentifier($field), array_keys($this->data)));
-                $values = implode(',', array_map(static fn (mixed $value) => Helpers::formatValue($value, $driver), array_values($this->data)));
+                $fields = implode(', ', array_map(static fn (string $field) => $driver->escapeIdentifier($field), array_keys($this->data)));
+                $values = implode(', ', array_map(static fn (mixed $value) => Helpers::formatValue($value, $driver), array_values($this->data)));
 
-                return "INSERT INTO $tableName($fields) VALUES ($values);";
+                return "INSERT INTO $tableName ($fields) VALUES ($values);";
             } catch (InvalidArgumentException $e) {
                 throw new InvalidArgumentException('Error creating UPDATE query.', previous: $e);
             }

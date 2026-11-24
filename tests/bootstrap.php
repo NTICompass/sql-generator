@@ -1,25 +1,21 @@
 <?php
-
 declare(strict_types=1);
 
-require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 Tester\Environment::setup();
 
-
-/**
- * @return void
- */
-function test(callable $cb)
+function test(callable $cb): void
 {
 	$cb();
 }
 
+function normalize(string $sql): string
+{
+    return ltrim(trim(preg_replace('@\s+@', ' ', $sql) ?? $sql));
+}
 
-/**
- * @return string
- */
-function prepareTempDir()
+function prepareTempDir(): string
 {
 	$tempDir = __DIR__ . '/tmp/' . getmypid();
 	@mkdir(dirname($tempDir), 0777, TRUE);

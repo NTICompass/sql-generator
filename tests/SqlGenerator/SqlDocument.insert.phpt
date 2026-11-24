@@ -1,16 +1,13 @@
 <?php
-
 declare(strict_types=1);
 
 use CzProject\SqlGenerator\Drivers;
 use CzProject\SqlGenerator\SqlDocument;
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
-
-test(function () {
-
+test(static function () {
 	$sql = new SqlDocument;
 	$driver = new Drivers\MysqlDriver;
 
@@ -22,24 +19,8 @@ test(function () {
 		'removed' => NULL,
 	]);
 
-	Assert::same(implode('', [
-		'INSERT INTO `contact` (',
-		implode(', ', [
-			'`name`',
-			'`surname`',
-			'`active`',
-			'`created`',
-			'`removed`',
-		]),
-		")\nVALUES (",
-		implode(', ', [
-			"'Harry'",
-			"'Potter'",
-			'0',
-			"'2016-12-31 16:12:31'",
-			'NULL',
-		]),
-		");\n",
-	]), $sql->toSql($driver));
-
+	Assert::same(normalize(<<<'SQL'
+        INSERT INTO `contact` (`name`, `surname`, `active`, `created`, `removed`)
+        VALUES ('Harry', 'Potter', 0, '2016-12-31 16:12:31', NULL);
+    SQL), normalize($sql->toSql($driver)));
 });

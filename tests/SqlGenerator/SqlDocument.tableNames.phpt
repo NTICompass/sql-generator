@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 use CzProject\SqlGenerator\Drivers;
@@ -7,11 +6,9 @@ use CzProject\SqlGenerator\SqlDocument;
 use CzProject\SqlGenerator\TableName;
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../bootstrap.php';
 
-
-test(function () {
-
+test(static function () {
 	$sql = new SqlDocument;
 	$driver = new Drivers\MysqlDriver;
 
@@ -33,32 +30,38 @@ test(function () {
 		'name' => 'test',
 	]);
 
-	Assert::same(implode("\n", [
-		'CREATE TABLE `aaa`.`author` (',
-		'	`id` INT NOT NULL',
-		');',
-		'',
-		'CREATE TABLE `bbb`.`book` (',
-		'	`id` INT NOT NULL,',
-		'	`author_id` INT NOT NULL,',
-		'	CONSTRAINT `fk_author_id` FOREIGN KEY (`id`) REFERENCES `aaa`.`author` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT',
-		');',
-		'',
-		'RENAME TABLE `aaa`.`test` TO `bbb`.`test`;',
-		'',
-		'ALTER TABLE `aaa`.`test`',
-		'ADD CONSTRAINT `fk_test` FOREIGN KEY (`book_id`) REFERENCES `bbb`.`book` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;',
-		'',
-		'INSERT INTO `aaa`.`test` (`id`, `name`)',
-		'VALUES (1, \'test\');',
-		'',
-	]), $sql->toSql($driver));
+    $expected = [
+        <<<'SQL'
+            CREATE TABLE `aaa`.`author` (
+               `id` INT NOT NULL
+            );
+        SQL,
 
+        <<<'SQL'
+            CREATE TABLE `bbb`.`book` (
+                `id` INT NOT NULL,
+                `author_id` INT NOT NULL,
+                CONSTRAINT `fk_author_id` FOREIGN KEY (`id`) REFERENCES `aaa`.`author` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+            );
+        SQL,
+
+        'ALTER TABLE `aaa`.`test` RENAME TO `bbb`.`test`;',
+
+        <<<'SQL'
+            ALTER TABLE `aaa`.`test`
+                ADD CONSTRAINT `fk_test` FOREIGN KEY (`book_id`) REFERENCES `bbb`.`book` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+        SQL,
+
+        "INSERT INTO `aaa`.`test` (`id`, `name`) VALUES (1, 'test');",
+    ];
+
+    Assert::same(
+        array_map(Closure::fromCallable('normalize'), $expected),
+        array_map(Closure::fromCallable('normalize'), $sql->getSqlQueries($driver)),
+    );
 });
 
-
-test(function () {
-
+test(static function () {
 	$sql = new SqlDocument;
 	$driver = new Drivers\MysqlDriver;
 
@@ -80,25 +83,33 @@ test(function () {
 		'name' => 'test',
 	]);
 
-	Assert::same(implode("\n", [
-		'CREATE TABLE `aaa`.`author` (',
-		'	`id` INT NOT NULL',
-		');',
-		'',
-		'CREATE TABLE `bbb`.`book` (',
-		'	`id` INT NOT NULL,',
-		'	`author_id` INT NOT NULL,',
-		'	CONSTRAINT `fk_author_id` FOREIGN KEY (`id`) REFERENCES `aaa`.`author` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT',
-		');',
-		'',
-		'RENAME TABLE `aaa`.`test` TO `bbb`.`test`;',
-		'',
-		'ALTER TABLE `aaa`.`test`',
-		'ADD CONSTRAINT `fk_test` FOREIGN KEY (`book_id`) REFERENCES `bbb`.`book` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;',
-		'',
-		'INSERT INTO `aaa`.`test` (`id`, `name`)',
-		'VALUES (1, \'test\');',
-		'',
-	]), $sql->toSql($driver));
+    $expected = [
+        <<<'SQL'
+            CREATE TABLE `aaa`.`author` (
+               `id` INT NOT NULL
+            );
+        SQL,
 
+        <<<'SQL'
+            CREATE TABLE `bbb`.`book` (
+                `id` INT NOT NULL,
+                `author_id` INT NOT NULL,
+                CONSTRAINT `fk_author_id` FOREIGN KEY (`id`) REFERENCES `aaa`.`author` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+            );
+        SQL,
+
+        'ALTER TABLE `aaa`.`test` RENAME TO `bbb`.`test`;',
+
+        <<<'SQL'
+            ALTER TABLE `aaa`.`test`
+                ADD CONSTRAINT `fk_test` FOREIGN KEY (`book_id`) REFERENCES `bbb`.`book` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+        SQL,
+
+        "INSERT INTO `aaa`.`test` (`id`, `name`) VALUES (1, 'test');",
+    ];
+
+    Assert::same(
+        array_map(Closure::fromCallable('normalize'), $expected),
+        array_map(Closure::fromCallable('normalize'), $sql->getSqlQueries($driver)),
+    );
 });

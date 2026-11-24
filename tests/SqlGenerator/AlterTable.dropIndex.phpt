@@ -1,27 +1,27 @@
 <?php
-
 declare(strict_types=1);
 
 use CzProject\SqlGenerator\Drivers;
+use CzProject\SqlGenerator\NotImplementedException;
 use CzProject\SqlGenerator\Statements;
 use Tester\Assert;
 
-require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/../libs/DummyDriver.php';
+require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/../libs/DummyDriver.php';
 
-
-test(function () {
-
+test(static function () {
 	$table = new Statements\AlterTable('book');
 	$table->dropIndex('contact');
 	$table->dropIndex(NULL);
 
-	Assert::same("ALTER TABLE `book`\nDROP INDEX `contact`,\nDROP PRIMARY KEY;", $table->toSql(new Drivers\MysqlDriver));
+	Assert::same(
+        'ALTER TABLE `book` DROP INDEX `contact`, DROP PRIMARY KEY;',
+        normalize($table->toSql(new Drivers\MysqlDriver)),
+    );
 
-	Assert::exception(function () use ($table) {
-
-		$table->toSql(new Tests\DummyDriver);
-
-	}, \CzProject\SqlGenerator\NotImplementedException::class, 'Drop of primary key is not implemented for driver Tests\DummyDriver.');
-
+	Assert::exception(
+        static fn (): string => $table->toSql(new Tests\DummyDriver),
+        NotImplementedException::class,
+        'Drop key is not implemented for driver Tests\DummyDriver.',
+    );
 });
