@@ -121,7 +121,7 @@
 					$output .= ",\n";
 				}
 
-				$output .= trim($statement->toSql($driver), ';');
+				$output .= $statement->toSql($driver);
 			}
 
 			if (isset($this->comment)) {

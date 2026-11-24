@@ -85,7 +85,7 @@
                     $output .= ' AFTER ' . $driver->escapeIdentifier($this->position);
                 }
 
-                return $output . ';';
+                return $output;
             }
             else {
                 throw new NotImplementedException('Modify column is not implemented for driver ' . get_class($driver) . '.');
