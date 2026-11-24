@@ -80,7 +80,7 @@ test(static function () {
             CHECKSUM=0,
             COMPRESSION='NONE',
             ENGINE=InnoDB;
-        SQL), normalize($sql->toSql($driver)));
+    SQL), normalize($sql->toSql($driver)));
 });
 
 test(static function () {

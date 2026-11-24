@@ -28,6 +28,7 @@ test(static function () {
             )
             COMMENT 'Clients table.';
         SQL,
+
         'ALTER TABLE `book` DROP COLUMN `name`;'
     ];
 
