@@ -39,25 +39,16 @@
             try {
                 $tableName = Helpers::escapeTableName($this->tableName, $driver);
 
-                $set = implode(',', array_map(
-                    static fn (string $field, mixed $value): string => sprintf(
-                        '%s=%s',
-                        $driver->escapeIdentifier($field),
-                        Helpers::formatValue($value, $driver),
-                    ),
-                    array_keys($this->data),
-                    array_values($this->data),
-                ));
+                $set = Helpers::key_value_to_string(
+                    static fn (string $field, mixed $value): string => sprintf('%s = %s', $driver->escapeIdentifier($field), Helpers::formatValue($value, $driver)),
+                    $this->data,
+                );
 
-                $where = implode(' AND ', array_map(
-                    static fn (string $field, string $value): string => sprintf(
-                        '%s=%s',
-                        $driver->escapeIdentifier($field),
-                        Helpers::formatValue($value, $driver),
-                    ),
-                    array_keys($this->where),
-                    array_values($this->where),
-                ));
+                $where = Helpers::key_value_to_string(
+                    static fn (string $field, string $value): string => sprintf('%s = %s', $driver->escapeIdentifier($field), Helpers::formatValue($value, $driver)),
+                    $this->where,
+                    ' AND ',
+                );
 
                 return "UPDATE $tableName SET $set WHERE $where;";
             } catch (InvalidArgumentException $e) {
