@@ -66,4 +66,23 @@
         {
 			return str_replace(["\r\n", "\r"], "\n", $s);
 		}
+
+        /**
+         * @template V
+         * @template K of array-key
+         * @param callable(K $key, V $value): string $cb
+         * @param array<K, V> $data
+         * @param string $separator
+         * @return string
+         */
+        public static function key_value_to_string(callable $cb, array $data, string $separator = ', '): string {
+            /** @var string[] $output */
+            $output = [];
+
+            foreach ($data as $key => $value) {
+                $output[] = $cb($key, $value);
+            }
+
+            return implode($separator, $output);
+        }
 	}
