@@ -98,6 +98,6 @@ class Select implements Statement
         $limit = $this->limit > 0 ? "LIMIT {$this->limit}" : '';
         $offset = $this->offset > 0 ? "OFFSET {$this->offset}" : '';
 
-        return trim("$select $fields $from $join $where $group $having $order $limit $offset;");
+        return trim("$select $fields $from $join $where $group $having $order $limit $offset") . ';';
     }
 }
