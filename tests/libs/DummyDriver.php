@@ -1,74 +1,69 @@
 <?php
+declare(strict_types=1);
 
-	declare(strict_types=1);
+use CzProject\SqlGenerator\Drivers\DateParserTrait;
+use CzProject\SqlGenerator\Driver;
 
-	namespace Tests;
+class DummyDriver implements Driver
+{
+    use DateParserTrait;
 
-	use CzProject\SqlGenerator\Drivers\DateParserTrait;
-	use CzProject\SqlGenerator\Driver;
-    use CzProject\SqlGenerator\NotImplementedException;
-    use DateTimeInterface;
+    public bool $renameTable = false;
 
-    class DummyDriver implements Driver
-	{
-        use DateParserTrait;
+    public bool $renameColumn = false;
 
-        public bool $renameTable = false;
+    public bool $modifyColumn = false;
 
-        public bool $renameColumn = false;
+    /**
+     * @var string[]
+     */
+    private const TRANSACTION = [
+        'start' => 'BEGIN;',
+        'commit' => 'COMMIT;',
+        'rollback' => 'ROLLBACK',
+    ];
 
-        public bool $modifyColumn = false;
+    private const LAST_ID = 'LAST_INSERT_ID()';
 
-        /**
-         * @var string[]
-         */
-        private const TRANSACTION = [
-            'start' => 'BEGIN;',
-            'commit' => 'COMMIT;',
-            'rollback' => 'ROLLBACK',
-        ];
+    public function escapeIdentifier(string $value): string
+    {
+        // @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
+        // @see http://api.dibiphp.com/2.3.2/source-drivers.DibiMySqlDriver.php.html#307
+        return '`' . str_replace('`', '``', $value) . '`';
+    }
 
-        private const LAST_ID = 'LAST_INSERT_ID()';
+    public function escapeText(string $value): string
+    {
+        // https://dev.mysql.com/doc/refman/5.5/en/string-literals.html
+        // http://us3.php.net/manual/en/function.mysql-real-escape-string.php#101248
+        return '\'' . str_replace(
+            ['\\', "\0", "\n", "\r", "\t", "'", '"', "\x1a"],
+            ['\\\\', '\\0', '\\n', '\\r', '\\t', "\\'", '\\"', '\\Z'],
+            $value
+        ) . '\'';
+    }
 
-		public function escapeIdentifier(string $value): string
-		{
-			// @see http://dev.mysql.com/doc/refman/5.0/en/identifiers.html
-			// @see http://api.dibiphp.com/2.3.2/source-drivers.DibiMySqlDriver.php.html#307
-			return '`' . str_replace('`', '``', $value) . '`';
-		}
+    public function escapeBool(bool $value): string
+    {
+        return $value ? 'TRUE' : 'FALSE';
+    }
 
-		public function escapeText(string $value): string
-		{
-			// https://dev.mysql.com/doc/refman/5.5/en/string-literals.html
-			// http://us3.php.net/manual/en/function.mysql-real-escape-string.php#101248
-			return '\'' . str_replace(
-				['\\', "\0", "\n", "\r", "\t", "'", '"', "\x1a"],
-				['\\\\', '\\0', '\\n', '\\r', '\\t', "\\'", '\\"', '\\Z'],
-				$value
-			) . '\'';
-		}
+    public function escapeDate(DateTimeInterface|string $value): string
+    {
+        return $this->dateFormat($value, "'Y-m-d'");
+    }
 
-		public function escapeBool(bool $value): string
-		{
-			return $value ? 'TRUE' : 'FALSE';
-		}
+    public function escapeDateTime(DateTimeInterface|string $value): string
+    {
+        return $this->dateFormat($value, "'Y-m-d H:i:s'");
+    }
 
-		public function escapeDate(DateTimeInterface|string $value): string
-		{
-            return $this->dateFormat($value, "'Y-m-d'");
-		}
+    public function transaction(string $action): string
+    {
+        return self::TRANSACTION[$action];
+    }
 
-		public function escapeDateTime(DateTimeInterface|string $value): string
-		{
-            return $this->dateFormat($value, "'Y-m-d H:i:s'");
-		}
-
-        public function transaction(string $action): string
-        {
-            return self::TRANSACTION[$action];
-        }
-
-        public function lastId(): string {
-            return self::LAST_ID;
-        }
-	}
+    public function lastId(): string {
+        return self::LAST_ID;
+    }
+}

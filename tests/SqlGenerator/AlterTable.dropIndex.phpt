@@ -20,8 +20,8 @@ test(static function () {
     );
 
 	Assert::exception(
-        static fn (): string => $table->toSql(new Tests\DummyDriver),
+        static fn (): string => $table->toSql(new DummyDriver),
         NotImplementedException::class,
-        'Drop key is not implemented for driver Tests\DummyDriver.',
+        'Drop key is not implemented for driver DummyDriver.',
     );
 });

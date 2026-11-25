@@ -16,8 +16,8 @@ test(static function () {
 	Assert::same("ALTER TABLE `contact` RENAME TO `client`;", normalize($sql->toSql(new Drivers\MysqlDriver)));
 
 	Assert::exception(
-        static fn () : string => $sql->toSql(new Tests\DummyDriver),
+        static fn () : string => $sql->toSql(new DummyDriver),
         NotImplementedException::class,
-        'Table rename is not implemented for driver Tests\DummyDriver.',
+        'Table rename is not implemented for driver DummyDriver.',
     );
 });
