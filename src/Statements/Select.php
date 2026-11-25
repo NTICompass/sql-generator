@@ -40,7 +40,8 @@ class Select implements Statement
         private int $limit = 0,
         private int $offset = 0,
         private bool $distinct = false,
-    ) {}
+    )
+    {}
 
     /**
      * @throws InvalidArgumentException

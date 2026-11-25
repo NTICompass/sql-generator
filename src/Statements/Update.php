@@ -14,7 +14,7 @@
 	{
 		/**
 		 * @param array<string, mixed> $data
-		 * @param array<string, string> $where
+		 * @param array<array-key, mixed | Where> $where
 		 */
 		public function __construct(private string|TableName $tableName, private array $data, private array $where)
 		{
@@ -28,19 +28,10 @@
 		{
             try {
                 $tableName = Helpers::escapeTableName($this->tableName, $driver);
+                $set = (new Where($this->data, 'SET', ', '))->toSql($driver);
+                $where = (new Where($this->where, 'WHERE'))->toSql($driver);
 
-                $set = Helpers::key_value_to_string(
-                    static fn (string $field, mixed $value): string => sprintf('%s = %s', $driver->escapeIdentifier($field), Helpers::formatValue($value, $driver)),
-                    $this->data,
-                );
-
-                $where = Helpers::key_value_to_string(
-                    static fn (string $field, string $value): string => sprintf('%s = %s', $driver->escapeIdentifier($field), Helpers::formatValue($value, $driver)),
-                    $this->where,
-                    ' AND ',
-                );
-
-                return "UPDATE $tableName SET $set WHERE $where;";
+                return "UPDATE $tableName $set $where;";
             } catch (InvalidArgumentException $e) {
                 throw new InvalidArgumentException('Error creating UPDATE query.', previous: $e);
             }
