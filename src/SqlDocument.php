@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace CzProject\SqlGenerator;
 
-use CzProject\SqlGenerator\Statements\Transaction;
-
 class SqlDocument
 {
     /** @var Statement[] */
@@ -77,11 +75,23 @@ class SqlDocument
 
     /**
      * @param 'start'|'commit'|'rollback' $action
-     * @return Transaction
+     * @return Statements\Transaction
      */
     public function transaction(string $action): Statements\Transaction
     {
         $statement = new Statements\Transaction($action);
+        $this->addStatement($statement);
+        return $statement;
+    }
+
+    /**
+     * @param string|TableName $tableName
+     * @param array<array-key, string | Statements\Select> $fields $fields
+     * @param array<array-key, mixed | Statements\Where> $where
+     * @return Statements\Select
+     */
+    public function select(string|TableName $tableName, array $fields = [], array $where = []): Statements\Select {
+        $statement = new Statements\Select($fields, [$tableName], where: $where);
         $this->addStatement($statement);
         return $statement;
     }

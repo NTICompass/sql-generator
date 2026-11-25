@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use CzProject\SqlGenerator\Drivers;
+use CzProject\SqlGenerator\SqlDocument;
 use CzProject\SqlGenerator\Statements\Select;
 use Tester\Assert;
 
@@ -17,22 +18,22 @@ test(static function () {
 
 test(static function () {
     $driver = new Drivers\MysqlDriver;
+    $statement = new SqlDocument;
 
-    $select = new Select(['rows' => 'COUNT(*)'], ['information']);
+    $statement->select('information', ['rows' => 'COUNT(*)']);
 
-    Assert::same('SELECT COUNT(*) AS `rows` FROM `information`;', normalize($select->toSql($driver)));
+    Assert::same('SELECT COUNT(*) AS `rows` FROM `information`;', normalize($statement->toSql($driver)));
 });
 
 test(static function () {
     $driver = new Drivers\MysqlDriver;
+    $statement = new SqlDocument;
 
-    $select = new Select(
-        ['`name`', 'rows' => 'COUNT(*)'],
-        ['table'],
-        [['table2', ['name']]],
-        group: ['name'],
-        order: [['date']],
-    );
+    $statement
+        ->select('table', ['`name`', 'rows' => 'COUNT(*)'])
+        ->addJoin('table2', ['name'])
+        ->addGroup('name')
+        ->addOrder('date');
 
     Assert::same(normalize(<<<'SQL'
         SELECT `name`, COUNT(*) AS `rows`
@@ -40,19 +41,18 @@ test(static function () {
         JOIN `table2` USING(`name`)
         GROUP BY `name`
         ORDER BY `date`;
-    SQL), normalize($select->toSql($driver)));
+    SQL), normalize($statement->toSql($driver)));
 });
 
 test(static function () {
     $driver = new Drivers\MysqlDriver;
+    $statement = new SqlDocument;
 
-    $select = new Select(
-        ['`name`', '`other_name`'],
-        ['table'],
-        [['table2', ['value' => 'Testing'], 'left']],
-        group: ['name'],
-        order: [['date']],
-    );
+    $statement
+        ->select('table', ['`name`', '`other_name`'])
+        ->addJoin('table2', ['value' => 'Testing'], 'left')
+        ->addGroup('name')
+        ->addOrder('date');
 
     Assert::same(normalize(<<<'SQL'
         SELECT `name`, `other_name`
@@ -60,5 +60,5 @@ test(static function () {
         LEFT JOIN `table2` ON `value` = 'Testing'
         GROUP BY `name`
         ORDER BY `date`;
-    SQL), normalize($select->toSql($driver)));
+    SQL), normalize($statement->toSql($driver)));
 });

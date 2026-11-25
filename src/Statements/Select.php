@@ -8,18 +8,19 @@ use CzProject\SqlGenerator\Driver;
 use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\InvalidArgumentException;
 use CzProject\SqlGenerator\Statement;
+use CzProject\SqlGenerator\TableName;
 
 require_once __DIR__ . '/../../vendor/autoload.php'; // We're using `array_is_list` which is PHP 8.1+
 
 /**
- * @phpstan-type Join array{0: string | self, 1: array<array-key, mixed | Where> | list<string>, 2?: 'inner' | 'left'}
- * @phpstan-type Order array{0: string, 1?: 'asc' | 'desc'}
+ * @phpstan-type Join array{0: string | TableName | self, 1: array<array-key, mixed | Where> | list<string>, 2?: 'inner' | 'left' | null}
+ * @phpstan-type Order array{0: string, 1?: 'asc' | 'desc' | null}
  */
 class Select implements Statement
 {
     /**
      * @param array<array-key, string | self> $fields
-     * @param array<array-key, string | self> $tables
+     * @param array<array-key, string | TableName | self> $tables
      * @param Join[] $join
      * @param array<array-key, mixed | Where> $where
      * @param list<string> $group
@@ -37,11 +38,47 @@ class Select implements Statement
         private array $group = [],
         private array $having = [],
         private array $order = [],
-        private int $limit = 0,
-        private int $offset = 0,
-        private bool $distinct = false,
+        public int $limit = 0,
+        public int $offset = 0,
+        public bool $distinct = false,
     )
     {}
+
+    /**
+     * @param string|TableName $table
+     * @param array<array-key, mixed | Where> | list<string> $on
+     * @param 'inner' | 'left' | null $type
+     * @return $this
+     */
+    public function addJoin(string|TableName $table, array $on, ?string $type = null): self {
+        $this->join[] = [$table, $on, $type];
+        return $this;
+    }
+
+    public function addGroup(string $group): self {
+        $this->group[] = $group;
+        return $this;
+    }
+
+    /**
+     * @param string $order
+     * @param 'asc' | 'desc' | null $dir
+     * @return $this
+     */
+    public function addOrder(string $order, ?string $dir = null): self {
+        $this->order[] = [$order, $dir];
+        return $this;
+    }
+
+    /**
+     * @param array-key $field
+     * @param mixed | Where $value
+     * @return $this
+     */
+    public function addHaving(string|int $field, mixed $value): self {
+        $this->having[$field] = $value;
+        return $this;
+    }
 
     /**
      * @throws InvalidArgumentException
@@ -58,8 +95,8 @@ class Select implements Statement
         );
 
         $fromData = Helpers::key_value_to_string(
-            static fn (int | string $alias, string | self $value): string =>
-                (is_string($value) ? Helpers::escapeTableName(Helpers::createTableName($value), $driver) : '(' . $value->toSql($driver) . ')') .
+            static fn (int | string $alias, string | TableName | self $value): string =>
+                ((is_string($value) || $value instanceof TableName) ? Helpers::escapeTableName(Helpers::createTableName($value), $driver) : '(' . $value->toSql($driver) . ')') .
                 (!is_int($alias) ? ' AS ' . $driver->escapeIdentifier($alias) : ''),
             $this->tables,
         );
@@ -72,7 +109,7 @@ class Select implements Statement
              */
             static function (int | string $alias, array $value) use ($driver): string {
                 $type = strtoupper($value[2] ?? '') . ' JOIN';
-                $table = is_string($value[0]) ? Helpers::escapeTableName(Helpers::createTableName($value[0]), $driver) : '(' . $value[0]->toSql($driver) . ')';
+                $table = (is_string($value[0]) || $value[0] instanceof TableName) ? Helpers::escapeTableName(Helpers::createTableName($value[0]), $driver) : '(' . $value[0]->toSql($driver) . ')';
                 $as = !is_int($alias) ? ' AS ' . $driver->escapeIdentifier($alias) : '';
 
                 if (array_is_list($value[1])) {
