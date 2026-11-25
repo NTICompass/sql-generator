@@ -1,33 +1,32 @@
 <?php
+declare(strict_types=1);
 
-	declare(strict_types=1);
+namespace CzProject\SqlGenerator;
 
-	namespace CzProject\SqlGenerator;
+use DateTimeInterface;
 
-	use DateTimeInterface;
+/**
+ * A few additional properties can be set to control the driver's capabilities:
+ *  - `public bool $renameTable`
+ *  - `public bool $renameColumn`
+ *  - `public bool $modifyColumn`
+ */
+interface Driver
+{
+    public function escapeIdentifier(string $value): string;
+
+    public function escapeText(string $value): string;
+
+    public function escapeBool(bool $value): string;
+
+    public function escapeDate(DateTimeInterface|string $value): string;
+
+    public function escapeDateTime(DateTimeInterface|string $value): string;
 
     /**
-     * A few additional properties can be set to control the driver's capabilities:
-     *  - `public bool $renameTable`
-     *  - `public bool $renameColumn`
-     *  - `public bool $modifyColumn`
+     * @param 'start'|'commit'|'rollback' $action
      */
-    interface Driver
-	{
-		public function escapeIdentifier(string $value): string;
+    public function transaction(string $action): string;
 
-		public function escapeText(string $value): string;
-
-		public function escapeBool(bool $value): string;
-
-		public function escapeDate(DateTimeInterface|string $value): string;
-
-		public function escapeDateTime(DateTimeInterface|string $value): string;
-
-        /**
-         * @param 'start'|'commit'|'rollback' $action
-         */
-        public function transaction(string $action): string;
-
-        public function lastId(): string;
-	}
+    public function lastId(): string;
+}

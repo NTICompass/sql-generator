@@ -1,45 +1,28 @@
 <?php
+declare(strict_types=1);
 
-	declare(strict_types=1);
+namespace CzProject\SqlGenerator;
 
-	namespace CzProject\SqlGenerator;
+class Exception extends \Exception
+{}
 
+class DuplicateException extends Exception
+{}
 
-	class Exception extends \Exception
-	{
-	}
+class InvalidArgumentException extends Exception
+{}
 
+class IOException extends Exception
+{}
 
-	class DuplicateException extends Exception
-	{
-	}
+class NotImplementedException extends Exception
+{}
 
+class NotSupportedException extends Exception
+{}
 
-	class InvalidArgumentException extends Exception
-	{
-	}
+class OutOfRangeException extends Exception
+{}
 
-
-	class IOException extends Exception
-	{
-	}
-
-
-	class NotImplementedException extends Exception
-	{
-	}
-
-
-	class NotSupportedException extends Exception
-	{
-	}
-
-
-	class OutOfRangeException extends Exception
-	{
-	}
-
-
-	class StaticClassException extends Exception
-	{
-	}
+class StaticClassException extends Exception
+{}

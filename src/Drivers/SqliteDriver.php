@@ -1,65 +1,64 @@
 <?php
+declare(strict_types=1);
 
-	declare(strict_types=1);
+namespace CzProject\SqlGenerator\Drivers;
 
-	namespace CzProject\SqlGenerator\Drivers;
+use CzProject\SqlGenerator\Driver;
+use DateTimeInterface;
+use SQLite3;
 
-	use CzProject\SqlGenerator\Driver;
-    use DateTimeInterface;
-    use SQLite3;
+/**
+ * @see https://sqlite.org/lang_keywords.html
+ */
+class SqliteDriver implements Driver
+{
+    use DateParserTrait;
+
+    public bool $modifyColumn = false;
 
     /**
-     * @see https://sqlite.org/lang_keywords.html
+     * @var string[]
      */
-	class SqliteDriver implements Driver
-	{
-        use DateParserTrait;
+    private const TRANSACTION = [
+        'start' => 'BEGIN TRANSACTION;',
+        'commit' => 'COMMIT TRANSACTION;',
+        'rollback' => 'ROLLBACK TRANSACTION;',
+    ];
 
-        public bool $modifyColumn = false;
+    private const LAST_ID = 'LAST_INSERT_ROWID()';
 
-        /**
-         * @var string[]
-         */
-        private const TRANSACTION = [
-            'start' => 'BEGIN TRANSACTION;',
-            'commit' => 'COMMIT TRANSACTION;',
-            'rollback' => 'ROLLBACK TRANSACTION;',
-        ];
+    public function escapeIdentifier(string $value): string
+    {
+        return '"'.str_replace('"', '""', $value).'"';
+    }
 
-        private const LAST_ID = 'LAST_INSERT_ROWID()';
+    public function escapeText(string $value): string
+    {
+        return "'".SQLite3::escapeString($value)."'";
+    }
 
-        public function escapeIdentifier(string $value): string
-        {
-            return '"'.str_replace('"', '""', $value).'"';
-        }
+    public function escapeBool(bool $value): string
+    {
+        return strval($value ? 1 : 0);
+    }
 
-        public function escapeText(string $value): string
-        {
-            return "'".SQLite3::escapeString($value)."'";
-        }
+    public function escapeDate(DateTimeInterface|string $value): string
+    {
+        return $this->escapeText($this->dateFormat($value, 'Y-m-d'));
+    }
 
-        public function escapeBool(bool $value): string
-        {
-            return strval($value ? 1 : 0);
-        }
+    public function escapeDateTime(DateTimeInterface|string $value): string
+    {
+        return $this->escapeText($this->dateFormat($value, 'Y-m-d H:i:s'));
+    }
 
-        public function escapeDate(DateTimeInterface|string $value): string
-        {
-            return $this->escapeText($this->dateFormat($value, 'Y-m-d'));
-        }
+    public function transaction(string $action): string
+    {
+        return self::TRANSACTION[$action];
+    }
 
-        public function escapeDateTime(DateTimeInterface|string $value): string
-        {
-            return $this->escapeText($this->dateFormat($value, 'Y-m-d H:i:s'));
-        }
-
-        public function transaction(string $action): string
-        {
-            return self::TRANSACTION[$action];
-        }
-
-        public function lastId(): string
-        {
-            return self::LAST_ID;
-        }
-	}
+    public function lastId(): string
+    {
+        return self::LAST_ID;
+    }
+}

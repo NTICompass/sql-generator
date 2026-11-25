@@ -1,36 +1,32 @@
 <?php
+declare(strict_types=1);
 
-	declare(strict_types=1);
+namespace CzProject\SqlGenerator;
 
-	namespace CzProject\SqlGenerator;
+class TableName
+{
+    /** @var list<string> */
+    private array $parts;
 
-	class TableName
-	{
-		/** @var string[] */
-		private array $parts;
+    public function __construct(string ...$parts)
+    {
+        $this->parts = array_values($parts);
+    }
 
-		/**
-		 * @param string ...$parts
-		 */
-		public function __construct(...$parts)
-		{
-			$this->parts = $parts;
-		}
+    public function toString(Driver $driver): string
+    {
+        $res = [];
 
-		public function toString(Driver $driver): string
-        {
-			$res = [];
+        foreach ($this->parts as $part) {
+            $res[] = $driver->escapeIdentifier($part);
+        }
 
-			foreach ($this->parts as $part) {
-				$res[] = $driver->escapeIdentifier($part);
-			}
+        return implode('.', $res);
+    }
 
-			return implode('.', $res);
-		}
-
-		public static function create(string $name): self
-        {
-			$parts = explode('.', $name);
-			return new self(...$parts);
-		}
-	}
+    public static function create(string $name): self
+    {
+        $parts = explode('.', $name);
+        return new self(...$parts);
+    }
+}

@@ -1,10 +1,9 @@
 <?php
+declare(strict_types=1);
 
-	declare(strict_types=1);
+namespace CzProject\SqlGenerator;
 
-	namespace CzProject\SqlGenerator;
-
-	interface Statement
-	{
-		public function toSql(Driver $driver): string;
-	}
+interface Statement
+{
+    public function toSql(Driver $driver): string;
+}

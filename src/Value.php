@@ -1,41 +1,36 @@
 <?php
+declare(strict_types=1);
 
-	declare(strict_types=1);
+namespace CzProject\SqlGenerator;
 
-	namespace CzProject\SqlGenerator;
+use DateTimeInterface;
+use Stringable;
 
-    use DateTimeInterface;
-    use Stringable;
-
-	class Value
-	{
-		/** @var scalar|Stringable|DateTimeInterface */
-		private int|float|bool|string|Stringable|DateTimeInterface $value;
-
-
-		/**
-		 * @param scalar|Stringable|DateTimeInterface $value
-		 */
-		public function __construct(int|float|bool|string|Stringable|DateTimeInterface $value)
-		{
-			$this->value = $value;
-		}
+class Value
+{
+    /**
+     * @param scalar|Stringable|DateTimeInterface $value
+     */
+    public function __construct(
+        private int|float|bool|string|Stringable|DateTimeInterface $value,
+    )
+    {}
 
 
-        /**
-         * @throws InvalidArgumentException
-         */
-		public function toString(Driver $driver): string
-        {
-			return Helpers::formatValue($this->value, $driver);
-		}
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function toString(Driver $driver): string
+    {
+        return Helpers::formatValue($this->value, $driver);
+    }
 
 
-		/**
-		 * @param scalar|Stringable|DateTimeInterface $value
-		 */
-		public static function create(int|float|bool|string|Stringable|DateTimeInterface $value): self
-        {
-			return new self($value);
-		}
-	}
+    /**
+     * @param scalar|Stringable|DateTimeInterface $value
+     */
+    public static function create(int|float|bool|string|Stringable|DateTimeInterface $value): self
+    {
+        return new self($value);
+    }
+}
