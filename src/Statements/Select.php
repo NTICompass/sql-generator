@@ -12,7 +12,7 @@ use CzProject\SqlGenerator\Statement;
 require_once __DIR__ . '/../../vendor/autoload.php'; // We're using `array_is_list` which is PHP 8.1+
 
 /**
- * @phpstan-type Join array{0: string | self, 1: array<string, mixed> | list<string>, 2?: 'inner' | 'left'}
+ * @phpstan-type Join array{0: string | self, 1: array<array-key, mixed | Where> | list<string>, 2?: 'inner' | 'left'}
  * @phpstan-type Order array{0: string, 1?: 'asc' | 'desc'}
  */
 class Select implements Statement
@@ -21,9 +21,9 @@ class Select implements Statement
      * @param array<array-key, string | self> $fields
      * @param array<array-key, string | self> $tables
      * @param Join[] $join
-     * @param array<string, mixed> $where
+     * @param array<array-key, mixed | Where> $where
      * @param list<string> $group
-     * @param array<string, mixed> $having
+     * @param array<array-key, mixed | Where> $having
      * @param list<Order> $order
      * @param int $limit
      * @param int $offset
@@ -80,12 +80,7 @@ class Select implements Statement
                     $clause = ' USING(' . implode(', ', array_map(Closure::fromCallable([$driver, 'escapeIdentifier']), $value[1])) . ')';
                 }
                 else {
-                    $clause = ' ON ' . Helpers::key_value_to_string(
-                        // @phpstan-ignore argument.type (`$field` is really `int | string`, but I know it's always a `string` here)
-                        static fn (string $field, mixed $value): string => sprintf('%s = %s', $driver->escapeIdentifier($field), Helpers::formatValue($value, $driver)),
-                        $value[1],
-                        ' AND ',
-                    );
+                    $clause = (new Where($value[1], 'ON'))->toSql($driver);
                 }
 
                 return trim("$type $table $as $clause");
@@ -93,22 +88,12 @@ class Select implements Statement
             $this->join,
         );
 
-        $whereData = Helpers::key_value_to_string(
-            static fn (string $field, mixed $value): string => sprintf('%s = %s', $driver->escapeIdentifier($field), Helpers::formatValue($value, $driver)),
-            $this->where,
-            ' AND ',
-        );
-        $where = $whereData !== '' ? "WHERE $whereData" : '';
+        $where = $this->where !== [] ? (new Where($this->where))->toSql($driver) : '';
 
         $groupData = implode(', ', array_map(static fn (string $value): string => Helpers::escapeTableName(Helpers::createTableName($value), $driver), $this->group));
         $group = $groupData !== '' ? "GROUP BY $groupData" : '';
 
-        $havingData = Helpers::key_value_to_string(
-            static fn (string $field, mixed $value): string => sprintf('%s = %s', $driver->escapeIdentifier($field), Helpers::formatValue($value, $driver)),
-            $this->having,
-            ' AND ',
-        );
-        $having = $havingData !== '' ? "HAVING $havingData" : '';
+        $having = $this->having !== [] ? (new Where($this->having, 'HAVING'))->toSql($driver) : '';
 
         $orderData = implode(', ', array_map(
             /**
