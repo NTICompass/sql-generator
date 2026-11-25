@@ -12,23 +12,13 @@
 
 	class Update implements Statement
 	{
-		private string|TableName $tableName;
-
-		/** @var array<string, mixed> */
-		private array $data;
-
-        /** @var array<string, string> */
-        private array $where;
-
 		/**
 		 * @param array<string, mixed> $data
 		 * @param array<string, string> $where
 		 */
-		public function __construct(string|TableName $tableName, array $data, array $where)
+		public function __construct(private string|TableName $tableName, private array $data, private array $where)
 		{
 			$this->tableName = Helpers::createTableName($tableName);
-			$this->data = $data;
-			$this->where = $where;
 		}
 
         /**
