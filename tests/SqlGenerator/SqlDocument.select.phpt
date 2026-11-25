@@ -42,3 +42,23 @@ test(static function () {
         ORDER BY `date`;
     SQL), normalize($select->toSql($driver)));
 });
+
+test(static function () {
+    $driver = new Drivers\MysqlDriver;
+
+    $select = new Select(
+        ['`name`', '`other_name`'],
+        ['table'],
+        [['table2', ['value' => 'Testing'], 'left']],
+        group: ['name'],
+        order: [['date']],
+    );
+
+    Assert::same(normalize(<<<'SQL'
+        SELECT `name`, `other_name`
+        FROM `table`
+        LEFT JOIN `table2` ON `value` = 'Testing'
+        GROUP BY `name`
+        ORDER BY `date`;
+    SQL), normalize($select->toSql($driver)));
+});
