@@ -12,18 +12,19 @@ use CzProject\SqlGenerator\Statement;
 require_once __DIR__ . '/../../vendor/autoload.php'; // We're using `array_is_list` which is PHP 8.1+
 
 /**
- * @phpstan-type Join array{0: string | self, 1: array<string, mixed> | list<string>, 2?: 'inner' | 'left'} | array{0: string | self, 1: array<string, mixed> | list<string>}
+ * @phpstan-type Join array{0: string | self, 1: array<string, mixed> | list<string>, 2?: 'inner' | 'left'}
+ * @phpstan-type Order array{0: string, 1?: 'asc' | 'desc'}
  */
 class Select implements Statement
 {
     /**
-     * @param array<int | string, string | self> $fields
-     * @param array<int | string, string | self> $tables
-     * @param array<int | string, Join> $join
+     * @param array<array-key, string | self> $fields
+     * @param array<array-key, string | self> $tables
+     * @param Join[] $join
      * @param array<string, mixed> $where
      * @param list<string> $group
      * @param array<string, mixed> $having
-     * @param list<array{0: string} | array{0: string, 1?: 'asc' | 'desc'}> $order
+     * @param list<Order> $order
      * @param int $limit
      * @param int $offset
      * @param bool $distinct
@@ -68,19 +69,26 @@ class Select implements Statement
              * @param Join $value
              * @throws InvalidArgumentException
              */
-            static fn (int | string $alias, array $value): string => trim(
-                strtoupper($value[2] ?? '') . ' JOIN ' .
-                (is_string($value[0]) ? Helpers::escapeTableName(Helpers::createTableName($value[0]), $driver) : '(' . $value[0]->toSql($driver) . ')') .
-                (!is_int($alias) ? ' AS ' . $driver->escapeIdentifier($alias) : '').
-                (array_is_list($value[1])
-                    ? ' USING(' . implode(', ', array_map(Closure::fromCallable([$driver, 'escapeIdentifier']), $value[1])) . ')'
-                    : ' ON ' . Helpers::key_value_to_string(
+            static function (int | string $alias, array $value) use ($driver): string {
+                $type = strtoupper($value[2] ?? '') . ' JOIN';
+                $table = is_string($value[0]) ? Helpers::escapeTableName(Helpers::createTableName($value[0]), $driver) : '(' . $value[0]->toSql($driver) . ')';
+                $as = !is_int($alias) ? ' AS ' . $driver->escapeIdentifier($alias) : '';
+
+                if (array_is_list($value[1])) {
+                    // @phpstan-ignore argument.type (`array_map()` expects `callable(mixed): mixed`, not `Closure(string): string`)
+                    $clause = ' USING(' . implode(', ', array_map(Closure::fromCallable([$driver, 'escapeIdentifier']), $value[1])) . ')';
+                }
+                else {
+                    $clause = ' ON ' . Helpers::key_value_to_string(
+                        // @phpstan-ignore argument.type (`$field` is really `int | string`, but I know it's always a `string` here)
                         static fn (string $field, mixed $value): string => sprintf('%s = %s', $driver->escapeIdentifier($field), Helpers::formatValue($value, $driver)),
                         $value[1],
                         ' AND ',
-                    )
-                ),
-            ),
+                    );
+                }
+
+                return trim("$type $table $as $clause");
+            },
             $this->join,
         );
 
@@ -103,7 +111,7 @@ class Select implements Statement
 
         $orderData = implode(', ', array_map(
             /**
-             * @param array{0: string, 1?: 'asc' | 'desc'} $value
+             * @param Order $value
              */
             static fn (array $value): string => trim(Helpers::escapeTableName(Helpers::createTableName($value[0]), $driver) . ' ' . strtoupper($value[1] ?? '')),
             $this->order,
