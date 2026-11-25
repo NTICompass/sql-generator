@@ -10,9 +10,35 @@ require_once __DIR__ . '/../bootstrap.php';
 test(static function () {
     $driver = new Drivers\MysqlDriver;
 
-    $select = new Select;
+    $select = new Select(tables: ['information']);
+
+    Assert::same('SELECT * FROM `information`;', normalize($select->toSql($driver)));
+});
+
+test(static function () {
+    $driver = new Drivers\MysqlDriver;
+
+    $select = new Select(['rows' => 'COUNT(*)'], ['information']);
+
+    Assert::same('SELECT COUNT(*) AS `rows` FROM `information`;', normalize($select->toSql($driver)));
+});
+
+test(static function () {
+    $driver = new Drivers\MysqlDriver;
+
+    $select = new Select(
+        ['`name`', 'rows' => 'COUNT(*)'],
+        ['table'],
+        [['table2', ['name']]],
+        group: ['name'],
+        order: [['date']],
+    );
 
     Assert::same(normalize(<<<'SQL'
-        SELECT *;
+        SELECT `name`, COUNT(*) AS `rows`
+        FROM `table`
+        JOIN `table2` USING(`name`)
+        GROUP BY `name`
+        ORDER BY `date`;
     SQL), normalize($select->toSql($driver)));
 });
