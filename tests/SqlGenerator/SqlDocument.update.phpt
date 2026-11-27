@@ -36,7 +36,7 @@ test(static function () {
 
     $date = new DateTime('2016-12-31 16:12:31', new DateTimeZone('UTC'));
 
-    $update = $sql->update('contact', [
+    $sql->update('contact', [
         'active' => FALSE,
         'created' => $date,
         'removed' => NULL,
@@ -60,5 +60,5 @@ test(static function () {
         null,
         'Harry',
         'Potter',
-    ], $update->getParams());
+    ], $sql->getParams());
 });

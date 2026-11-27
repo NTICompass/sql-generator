@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace CzProject\SqlGenerator;
 
+use Generator;
+
 class SqlDocument
 {
     /** @var Statement[] */
@@ -20,37 +22,41 @@ class SqlDocument
     }
 
     /**
+     * @return Generator<int, string>
+     */
+    private function getQueries(Driver $driver): Generator {
+        foreach ($this->statements as $statement) {
+           yield $statement->toSql($driver);
+        }
+    }
+
+    /**
      * @return string[]
      */
     public function getSqlQueries(Driver $driver): array
     {
-        $output = [];
-
-        foreach ($this->statements as $statement) {
-            $output[] = $statement->toSql($driver);
-        }
-
-        return $output;
+        return iterator_to_array($this->getQueries($driver));
     }
 
     public function toSql(Driver $driver): string
     {
-        $output = '';
-        $first = TRUE;
+        $statements = $this->getSqlQueries($driver);
+        return $statements === [] ? '' : implode("\n\n", $statements) . "\n";
+    }
+
+    /**
+     * @return list<mixed>
+     */
+    public function getParams(): array {
+        $ret = [];
 
         foreach ($this->statements as $statement) {
-            if ($first) {
-                $first = FALSE;
-
-            } else {
-                $output .= "\n";
+            if ($statement instanceof PreparedStatement) {
+                array_push($ret, ...$statement->getParams());
             }
-
-            $output .= $statement->toSql($driver);
-            $output .= "\n";
         }
 
-        return $output;
+        return $ret;
     }
 
     /**

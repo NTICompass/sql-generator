@@ -67,7 +67,7 @@ test(static function () {
     $driver = new Drivers\MysqlDriver;
     $statement = new SqlDocument;
 
-    $select = $statement->select(
+    $statement->select(
         'information',
         ['`data`'],
         ['value' => 'Testing'],
@@ -75,5 +75,5 @@ test(static function () {
     );
 
     Assert::same('SELECT `data` FROM `information` WHERE `value` = ?;', normalize($statement->toSql($driver)));
-    Assert::same(['Testing'], $select->getParams());
+    Assert::same(['Testing'], $statement->getParams());
 });
