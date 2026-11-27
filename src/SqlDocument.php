@@ -103,9 +103,9 @@ class SqlDocument
     /**
      * @param array<string, mixed> $data
      */
-    public function insert(string|TableName $tableName, array $data, bool $preparedStatements = false): Statements\Insert
+    public function insert(string|TableName $tableName, array $data, bool $preparedStatements = false, bool $useSet = false): Statements\Insert
     {
-        $statement = new Statements\Insert($tableName, $data, preparedStatements: $preparedStatements);
+        $statement = new Statements\Insert($tableName, $data, preparedStatements: $preparedStatements, useSet: $useSet);
         $this->addStatement($statement);
         return $statement;
     }

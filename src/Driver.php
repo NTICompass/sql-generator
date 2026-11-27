@@ -29,4 +29,6 @@ interface Driver
     public function transaction(string $action): string;
 
     public function lastId(): string;
+
+    public function supportsInsertSet(): bool;
 }

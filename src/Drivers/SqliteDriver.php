@@ -61,4 +61,9 @@ class SqliteDriver implements Driver
     {
         return self::LAST_ID;
     }
+
+    public function supportsInsertSet(): bool
+    {
+        return false;
+    }
 }

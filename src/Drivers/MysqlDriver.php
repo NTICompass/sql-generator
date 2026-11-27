@@ -63,4 +63,9 @@ class MysqlDriver implements Driver
     {
         return self::LAST_ID;
     }
+
+    public function supportsInsertSet(): bool
+    {
+        return true;
+    }
 }
