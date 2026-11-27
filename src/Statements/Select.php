@@ -7,7 +7,7 @@ use Closure;
 use CzProject\SqlGenerator\Driver;
 use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\InvalidArgumentException;
-use CzProject\SqlGenerator\Statement;
+use CzProject\SqlGenerator\PreparedStatement;
 use CzProject\SqlGenerator\TableName;
 
 require_once __DIR__ . '/../../vendor/autoload.php'; // We're using `array_is_list` which is PHP 8.1+
@@ -16,8 +16,10 @@ require_once __DIR__ . '/../../vendor/autoload.php'; // We're using `array_is_li
  * @phpstan-type Join array{0: string | TableName | self, 1: array<array-key, mixed | Where> | list<string>, 2?: 'inner' | 'left' | null}
  * @phpstan-type Order array{0: string, 1?: 'asc' | 'desc' | null}
  */
-class Select implements Statement
+class Select implements PreparedStatement
 {
+    private ?Where $whereData;
+
     /**
      * @param array<array-key, string | self> $fields
      * @param array<array-key, string | TableName | self> $tables
@@ -29,20 +31,24 @@ class Select implements Statement
      * @param int $limit
      * @param int $offset
      * @param bool $distinct
+     * @param bool $preparedStatements
      */
     public function __construct(
         private array $fields = ['*'],
         private array $tables = [],
         private array $join = [],
-        private array $where = [],
+        array $where = [],
         private array $group = [],
         private array $having = [],
         private array $order = [],
         public int $limit = 0,
         public int $offset = 0,
         public bool $distinct = false,
+        bool $preparedStatements = false,
     )
-    {}
+    {
+        $this->whereData = $where !== [] ? new Where($where, preparedStatements: $preparedStatements) : null;
+    }
 
     /**
      * @param string|TableName $table
@@ -125,7 +131,7 @@ class Select implements Statement
             $this->join,
         );
 
-        $where = $this->where !== [] ? (new Where($this->where))->toSql($driver) : '';
+        $where = $this->whereData?->toSql($driver) ?? '';
 
         $groupData = implode(', ', array_map(static fn (string $value): string => Helpers::escapeTableName(Helpers::createTableName($value), $driver), $this->group));
         $group = $groupData !== '' ? "GROUP BY $groupData" : '';
@@ -145,5 +151,9 @@ class Select implements Statement
         $offset = $this->offset > 0 ? "OFFSET {$this->offset}" : '';
 
         return trim("$select $fields $from $join $where $group $having $order $limit $offset") . ';';
+    }
+
+    public function getParams(): array {
+        return $this->whereData?->getParams() ?? [];
     }
 }

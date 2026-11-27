@@ -62,3 +62,18 @@ test(static function () {
         ORDER BY `date`;
     SQL), normalize($statement->toSql($driver)));
 });
+
+test(static function () {
+    $driver = new Drivers\MysqlDriver;
+    $statement = new SqlDocument;
+
+    $select = $statement->select(
+        'information',
+        ['`data`'],
+        ['value' => 'Testing'],
+        preparedStatements: true,
+    );
+
+    Assert::same('SELECT `data` FROM `information` WHERE `value` = ?;', normalize($statement->toSql($driver)));
+    Assert::same(['Testing'], $select->getParams());
+});

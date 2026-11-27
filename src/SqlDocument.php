@@ -85,13 +85,11 @@ class SqlDocument
     }
 
     /**
-     * @param string|TableName $tableName
      * @param array<array-key, string | Statements\Select> $fields $fields
      * @param array<array-key, mixed | Statements\Where> $where
-     * @return Statements\Select
      */
-    public function select(string|TableName $tableName, array $fields = [], array $where = []): Statements\Select {
-        $statement = new Statements\Select($fields, [$tableName], where: $where);
+    public function select(string|TableName $tableName, array $fields = [], array $where = [], bool $preparedStatements = false): Statements\Select {
+        $statement = new Statements\Select($fields, [$tableName], where: $where, preparedStatements: $preparedStatements);
         $this->addStatement($statement);
         return $statement;
     }
@@ -110,9 +108,9 @@ class SqlDocument
      * @param array<string, mixed> $data
      * @param array<string, string> $where
      */
-    public function update(string|TableName $tableName, array $data, array $where): Statements\Update
+    public function update(string|TableName $tableName, array $data, array $where, bool $preparedStatements = false): Statements\Update
     {
-        $statement = new Statements\Update($tableName, $data, $where);
+        $statement = new Statements\Update($tableName, $data, $where, preparedStatements: $preparedStatements);
         $this->addStatement($statement);
         return $statement;
     }

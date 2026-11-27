@@ -29,3 +29,36 @@ test(static function () {
           AND `surname` = 'Potter';
     SQL), normalize($sql->toSql($driver)));
 });
+
+test(static function () {
+    $sql = new SqlDocument;
+    $driver = new Drivers\MysqlDriver;
+
+    $date = new DateTime('2016-12-31 16:12:31', new DateTimeZone('UTC'));
+
+    $update = $sql->update('contact', [
+        'active' => FALSE,
+        'created' => $date,
+        'removed' => NULL,
+    ], [
+        'name' => 'Harry',
+        'surname' => 'Potter',
+    ], preparedStatements: true);
+
+    Assert::same(normalize(<<<'SQL'
+        UPDATE `contact`
+        SET `active` = ?,
+            `created` = ?,
+            `removed` = ?
+        WHERE `name` = ?
+          AND `surname` = ?;
+    SQL), normalize($sql->toSql($driver)));
+
+    Assert::same([
+        false,
+        $date,
+        null,
+        'Harry',
+        'Potter',
+    ], $update->getParams());
+});
