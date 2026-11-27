@@ -43,6 +43,17 @@ class Helpers
         throw new InvalidArgumentException("Unsupported value type.");
     }
 
+    public static function formatValueForPrepared(mixed $value): mixed {
+        if (is_bool($value)) {
+            return $value ? 1 : 0;
+        }
+        elseif ($value instanceof DateTimeInterface) {
+            return $value->format('Y-m-d H:i:s');
+        }
+
+        return $value;
+    }
+
     public static function escapeTableName(TableName|string $tableName, Driver $driver): string
     {
         if ($tableName instanceof TableName) {

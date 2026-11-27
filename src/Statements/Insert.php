@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CzProject\SqlGenerator\Statements;
 
+use Closure;
 use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\Driver;
 use CzProject\SqlGenerator\InvalidArgumentException;
@@ -40,6 +41,6 @@ class Insert implements PreparedStatement
     }
 
     public function getParams(): array {
-        return array_values($this->data);
+        return array_map(Closure::fromCallable([Helpers::class, 'formatValueForPrepared']), array_values($this->data));
     }
 }

@@ -59,7 +59,7 @@ class Where implements PreparedStatement
                 array_push($ret, ...$param->getParams());
             }
             else {
-                $ret[] = $param;
+                $ret[] = Helpers::formatValueForPrepared($param);
             }
         }
 

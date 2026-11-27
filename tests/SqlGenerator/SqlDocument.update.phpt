@@ -34,11 +34,9 @@ test(static function () {
     $sql = new SqlDocument;
     $driver = new Drivers\MysqlDriver;
 
-    $date = new DateTime('2016-12-31 16:12:31', new DateTimeZone('UTC'));
-
     $sql->update('contact', [
         'active' => FALSE,
-        'created' => $date,
+        'created' => new DateTime('2016-12-31 16:12:31', new DateTimeZone('UTC')),
         'removed' => NULL,
     ], [
         'name' => 'Harry',
@@ -55,8 +53,8 @@ test(static function () {
     SQL), normalize($sql->toSql($driver)));
 
     Assert::same([
-        false,
-        $date,
+        0,
+        '2016-12-31 16:12:31',
         null,
         'Harry',
         'Potter',
