@@ -77,7 +77,7 @@ class AddColumn implements Statement
     {
         $output = 'ADD COLUMN ' . $this->definition->toSql($driver);
 
-        if ($driver->modifyColumn ?? true) {
+        if ($driver->supportsColumnModify()) {
             if ($this->position === self::POSITION_FIRST) {
                 $output .= ' FIRST';
             }

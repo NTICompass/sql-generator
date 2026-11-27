@@ -66,4 +66,19 @@ class SqliteDriver implements Driver
     {
         return false;
     }
+
+    public function supportsTableRename(): bool
+    {
+        return true;
+    }
+
+    public function supportsColumnRename(): bool
+    {
+        return true;
+    }
+
+    public function supportsColumnModify(): bool
+    {
+        return false;
+    }
 }

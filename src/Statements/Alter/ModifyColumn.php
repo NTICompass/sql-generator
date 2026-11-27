@@ -74,7 +74,7 @@ class ModifyColumn implements Statement
      */
     public function toSql(Driver $driver): string
     {
-        if ($driver->modifyColumn ?? true) {
+        if ($driver->supportsColumnModify()) {
             $output = 'MODIFY COLUMN ' . $this->definition->toSql($driver);
 
             if ($this->position === self::POSITION_FIRST) {

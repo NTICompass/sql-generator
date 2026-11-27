@@ -8,12 +8,6 @@ class DummyDriver implements Driver
 {
     use DateParserTrait;
 
-    public bool $renameTable = false;
-
-    public bool $renameColumn = false;
-
-    public bool $modifyColumn = false;
-
     /**
      * @var string[]
      */
@@ -69,6 +63,21 @@ class DummyDriver implements Driver
     }
 
     public function supportsInsertSet(): bool
+    {
+        return false;
+    }
+
+    public function supportsTableRename(): bool
+    {
+        return false;
+    }
+
+    public function supportsColumnRename(): bool
+    {
+        return false;
+    }
+
+    public function supportsColumnModify(): bool
     {
         return false;
     }

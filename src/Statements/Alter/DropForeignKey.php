@@ -18,7 +18,7 @@ class DropForeignKey implements Statement
      */
     public function toSql(Driver $driver): string
     {
-        if ($driver->modifyColumn ?? true) {
+        if ($driver->supportsColumnModify()) {
             return 'DROP FOREIGN KEY ' . $driver->escapeIdentifier($this->foreignKey);
         }
         else {

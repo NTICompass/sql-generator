@@ -68,4 +68,19 @@ class MysqlDriver implements Driver
     {
         return true;
     }
+
+    public function supportsTableRename(): bool
+    {
+        return true;
+    }
+
+    public function supportsColumnRename(): bool
+    {
+        return true;
+    }
+
+    public function supportsColumnModify(): bool
+    {
+        return true;
+    }
 }

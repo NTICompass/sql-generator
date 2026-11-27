@@ -5,12 +5,6 @@ namespace CzProject\SqlGenerator;
 
 use DateTimeInterface;
 
-/**
- * A few additional properties can be set to control the driver's capabilities:
- *  - `public bool $renameTable`
- *  - `public bool $renameColumn`
- *  - `public bool $modifyColumn`
- */
 interface Driver
 {
     public function escapeIdentifier(string $value): string;
@@ -31,4 +25,10 @@ interface Driver
     public function lastId(): string;
 
     public function supportsInsertSet(): bool;
+
+    public function supportsTableRename(): bool;
+
+    public function supportsColumnRename(): bool;
+
+    public function supportsColumnModify(): bool;
 }

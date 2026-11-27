@@ -49,7 +49,7 @@ class AddForeignKey implements Statement
      */
     public function toSql(Driver $driver): string
     {
-        if ($driver->modifyColumn ?? true) {
+        if ($driver->supportsColumnModify()) {
             return 'ADD ' . $this->definition->toSql($driver);
         }
         else {

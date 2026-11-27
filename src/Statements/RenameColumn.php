@@ -24,7 +24,7 @@ class RenameColumn extends AlterTable
      */
     public function toSql(Driver $driver): string
     {
-        if ($driver->renameColumn ?? true) {
+        if ($driver->supportsColumnRename()) {
             $this->renameColumn($this->oldColumn, $this->newColumn);
 
             return parent::toSql($driver);

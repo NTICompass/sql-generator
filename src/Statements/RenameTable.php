@@ -22,7 +22,7 @@ class RenameTable extends AlterTable
      */
     public function toSql(Driver $driver): string
     {
-        if ($driver->renameTable ?? true) {
+        if ($driver->supportsTableRename()) {
             $this->rename($this->newTable);
 
             return parent::toSql($driver);
