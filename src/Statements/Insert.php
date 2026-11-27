@@ -36,7 +36,7 @@ class Insert implements PreparedStatement
 
             return "INSERT INTO $tableName ($fields) VALUES ($values);";
         } catch (InvalidArgumentException $e) {
-            throw new InvalidArgumentException('Error creating UPDATE query.', previous: $e);
+            throw new InvalidArgumentException('Error creating INSERT query.', previous: $e);
         }
     }
 
