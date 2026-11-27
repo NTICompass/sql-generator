@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 use PhpCsFixer\Config;
@@ -28,8 +27,6 @@ return (new Config)
         (new Finder)
             ->in(__DIR__ . '/src')
             ->append([__DIR__ . '/tests', __DIR__ . '/.php-cs-fixer.dist.php'])
-            ->notPath('vendor')
             ->name(['*.php', '*.phpt'])
-            ->ignoreVCS(true)
     )
 ;
