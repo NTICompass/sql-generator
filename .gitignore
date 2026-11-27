@@ -3,3 +3,7 @@
 composer.lock
 /tests/coverage.html
 /tests/**/output/
+
+# PHP CS Fixer configuration
+/.php-cs-fixer.cache
+/.php-cs-fixer.php

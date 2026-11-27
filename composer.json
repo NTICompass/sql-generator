@@ -21,6 +21,7 @@
 	},
 	"require-dev": {
 		"ext-xdebug": "*",
+		"friendsofphp/php-cs-fixer": "^3.95",
 		"nepada/phpstan-nette-tester": "^2.1",
 		"nette/tester": "^2.5",
 		"phpstan/extension-installer": "^1.4",
