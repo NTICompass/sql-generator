@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace CzProject\SqlGenerator\Statements;
 
 use Closure;
-use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\Driver;
+use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\InvalidArgumentException;
 use CzProject\SqlGenerator\PreparedStatement;
 use CzProject\SqlGenerator\TableName;
@@ -20,8 +20,7 @@ class Insert implements PreparedStatement
         private array $data,
         private bool $preparedStatements = false,
         private bool $useSet = false,
-    )
-    {
+    ) {
         $this->tableName = Helpers::createTableName($tableName);
     }
 
@@ -39,14 +38,14 @@ class Insert implements PreparedStatement
                 }
 
                 $insert = (new Where($this->data, 'SET', ', ', preparedStatements: $this->preparedStatements))->toSql($driver);
+
                 return "INSERT INTO $tableName $insert;";
             }
-            else {
-                $fields = implode(', ', array_map(static fn (string $field) => $driver->escapeIdentifier($field), array_keys($this->data)));
-                $values = implode(', ', array_map(fn (mixed $value) => $this->preparedStatements ? '?' : Helpers::formatValue($value, $driver), array_values($this->data)));
 
-                return "INSERT INTO $tableName ($fields) VALUES ($values);";
-            }
+            $fields = implode(', ', array_map(static fn (string $field) => $driver->escapeIdentifier($field), array_keys($this->data)));
+            $values = implode(', ', array_map(fn (mixed $value) => $this->preparedStatements ? '?' : Helpers::formatValue($value, $driver), array_values($this->data)));
+
+            return "INSERT INTO $tableName ($fields) VALUES ($values);";
         } catch (InvalidArgumentException $e) {
             throw new InvalidArgumentException('Error creating INSERT query.', previous: $e);
         }

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace CzProject\SqlGenerator\Statements;
 
-use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\Driver;
+use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\Statement;
 use CzProject\SqlGenerator\TableName;
 

@@ -14,8 +14,7 @@ class RenameColumn extends AlterTable
         TableName|string $tableName,
         private string $oldColumn,
         private string $newColumn,
-    )
-    {
+    ) {
         parent::__construct($tableName);
     }
 
@@ -29,8 +28,7 @@ class RenameColumn extends AlterTable
 
             return parent::toSql($driver);
         }
-        else {
-            throw new NotImplementedException('Column rename is not implemented for driver ' . get_class($driver) . '.');
-        }
+
+        throw new NotImplementedException('Column rename is not implemented for driver ' . $driver::class . '.');
     }
 }

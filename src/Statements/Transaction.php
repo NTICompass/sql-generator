@@ -12,7 +12,8 @@ class Transaction implements Statement
      * @param 'start'|'commit'|'rollback' $action
      */
     public function __construct(private string $action)
-    {}
+    {
+    }
 
     public function toSql(Driver $driver): string
     {

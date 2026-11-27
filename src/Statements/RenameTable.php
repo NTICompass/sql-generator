@@ -5,8 +5,8 @@ namespace CzProject\SqlGenerator\Statements;
 
 use CzProject\SqlGenerator\Driver;
 use CzProject\SqlGenerator\Helpers;
-use CzProject\SqlGenerator\NotImplementedException;
 use CzProject\SqlGenerator\InvalidArgumentException;
+use CzProject\SqlGenerator\NotImplementedException;
 use CzProject\SqlGenerator\TableName;
 
 class RenameTable extends AlterTable
@@ -27,9 +27,8 @@ class RenameTable extends AlterTable
 
             return parent::toSql($driver);
         }
-        else {
-            // @see http://stackoverflow.com/questions/886786/how-do-i-rename-the-table-name-using-sql-query
-            throw new NotImplementedException('Table rename is not implemented for driver ' . get_class($driver) . '.');
-        }
+
+        // @see http://stackoverflow.com/questions/886786/how-do-i-rename-the-table-name-using-sql-query
+        throw new NotImplementedException('Table rename is not implemented for driver ' . $driver::class . '.');
     }
 }

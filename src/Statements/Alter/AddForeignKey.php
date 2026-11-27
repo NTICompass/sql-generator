@@ -4,15 +4,14 @@ declare(strict_types=1);
 namespace CzProject\SqlGenerator\Statements;
 
 use CzProject\SqlGenerator\Driver;
-use CzProject\SqlGenerator\Statement;
 use CzProject\SqlGenerator\NotImplementedException;
 use CzProject\SqlGenerator\OutOfRangeException;
+use CzProject\SqlGenerator\Statement;
 use CzProject\SqlGenerator\TableName;
 
 class AddForeignKey implements Statement
 {
     private ForeignKeyDefinition $definition;
-
 
     /**
      * @param string|string[] $columns
@@ -23,16 +22,15 @@ class AddForeignKey implements Statement
         $this->definition = new ForeignKeyDefinition($name, $columns, $targetTable, $targetColumns);
     }
 
-
     /**
      * @throws OutOfRangeException
      */
     public function setOnUpdateAction(string $onUpdateAction): static
     {
         $this->definition->setOnUpdateAction($onUpdateAction);
+
         return $this;
     }
-
 
     /**
      * @throws OutOfRangeException
@@ -40,9 +38,9 @@ class AddForeignKey implements Statement
     public function setOnDeleteAction(string $onDeleteAction): static
     {
         $this->definition->setOnDeleteAction($onDeleteAction);
+
         return $this;
     }
-
 
     /**
      * @throws NotImplementedException
@@ -52,8 +50,7 @@ class AddForeignKey implements Statement
         if ($driver->supportsColumnModify()) {
             return 'ADD ' . $this->definition->toSql($driver);
         }
-        else {
-            throw new NotImplementedException('Add key is not implemented for driver ' . get_class($driver) . '.');
-        }
+
+        throw new NotImplementedException('Add key is not implemented for driver ' . $driver::class . '.');
     }
 }

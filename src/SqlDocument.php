@@ -5,6 +5,8 @@ namespace CzProject\SqlGenerator;
 
 use Generator;
 
+use function dirname;
+
 class SqlDocument
 {
     /** @var Statement[] */
@@ -13,6 +15,7 @@ class SqlDocument
     public function addStatement(Statement $statement): static
     {
         $this->statements[] = $statement;
+
         return $this;
     }
 
@@ -24,9 +27,10 @@ class SqlDocument
     /**
      * @return Generator<int, string>
      */
-    private function getQueries(Driver $driver): Generator {
+    private function getQueries(Driver $driver): Generator
+    {
         foreach ($this->statements as $statement) {
-           yield $statement->toSql($driver);
+            yield $statement->toSql($driver);
         }
     }
 
@@ -41,6 +45,7 @@ class SqlDocument
     public function toSql(Driver $driver): string
     {
         $statements = $this->getSqlQueries($driver);
+
         return $statements === [] ? '' : implode("\n\n", $statements) . "\n";
     }
 
@@ -68,36 +73,38 @@ class SqlDocument
         // create directory
         $dir = dirname($file);
 
-        if (!is_dir($dir) && !@mkdir($dir, 0777, TRUE) && !is_dir($dir)) { // @ - dir may already exist
+        if (!is_dir($dir) && !@mkdir($dir, 0777, true) && !is_dir($dir)) { // @ - dir may already exist
             throw new IOException("Unable to create directory '$dir'.");
         }
 
         // write file
         $content = $this->toSql($driver);
 
-        if (@file_put_contents($file, $content) === FALSE) { // @ is escalated to exception
+        if (@file_put_contents($file, $content) === false) { // @ is escalated to exception
             throw new IOException("Unable to write file '$file'.");
         }
     }
 
     /**
      * @param 'start'|'commit'|'rollback' $action
-     * @return Statements\Transaction
      */
     public function transaction(string $action): Statements\Transaction
     {
         $statement = new Statements\Transaction($action);
         $this->addStatement($statement);
+
         return $statement;
     }
 
     /**
      * @param array<array-key, string | Statements\Select> $fields $fields
-     * @param array<array-key, mixed | Statements\Where> $where
+     * @param array<array-key, mixed | Statements\Where>   $where
      */
-    public function select(string|TableName $tableName, array $fields = [], array $where = [], bool $preparedStatements = false): Statements\Select {
+    public function select(string|TableName $tableName, array $fields = [], array $where = [], bool $preparedStatements = false): Statements\Select
+    {
         $statement = new Statements\Select($fields, [$tableName], where: $where, preparedStatements: $preparedStatements);
         $this->addStatement($statement);
+
         return $statement;
     }
 
@@ -108,17 +115,19 @@ class SqlDocument
     {
         $statement = new Statements\Insert($tableName, $data, preparedStatements: $preparedStatements, useSet: $useSet);
         $this->addStatement($statement);
+
         return $statement;
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param array<string, mixed>  $data
      * @param array<string, string> $where
      */
     public function update(string|TableName $tableName, array $data, array $where, bool $preparedStatements = false): Statements\Update
     {
         $statement = new Statements\Update($tableName, $data, $where, preparedStatements: $preparedStatements);
         $this->addStatement($statement);
+
         return $statement;
     }
 
@@ -129,6 +138,7 @@ class SqlDocument
     {
         $statement = new Statements\Delete($tableName, $where, preparedStatements: $preparedStatements);
         $this->addStatement($statement);
+
         return $statement;
     }
 
@@ -136,6 +146,7 @@ class SqlDocument
     {
         $statement = new Statements\CreateTable($tableName);
         $this->addStatement($statement);
+
         return $statement;
     }
 
@@ -143,6 +154,7 @@ class SqlDocument
     {
         $statement = new Statements\DropTable($tableName);
         $this->addStatement($statement);
+
         return $statement;
     }
 
@@ -150,6 +162,7 @@ class SqlDocument
     {
         $statement = new Statements\RenameTable($oldTable, $newTable);
         $this->addStatement($statement);
+
         return $statement;
     }
 
@@ -157,6 +170,7 @@ class SqlDocument
     {
         $statement = new Statements\AlterTable($tableName);
         $this->addStatement($statement);
+
         return $statement;
     }
 
@@ -164,6 +178,7 @@ class SqlDocument
     {
         $statement = new Statements\SqlCommand($command);
         $this->addStatement($statement);
+
         return $statement;
     }
 
@@ -171,6 +186,7 @@ class SqlDocument
     {
         $statement = new Statements\Comment($comment);
         $this->addStatement($statement);
+
         return $statement;
     }
 }

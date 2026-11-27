@@ -3,16 +3,16 @@ declare(strict_types=1);
 
 namespace CzProject\SqlGenerator\Statements;
 
-use CzProject\SqlGenerator\OutOfRangeException;
 use CzProject\SqlGenerator\Driver;
+use CzProject\SqlGenerator\OutOfRangeException;
 use CzProject\SqlGenerator\Statement;
 
 class IndexDefinition implements Statement
 {
-    const TYPE_INDEX = 'INDEX';
-    const TYPE_PRIMARY = 'PRIMARY';
-    const TYPE_UNIQUE = 'UNIQUE';
-    const TYPE_FULLTEXT = 'FULLTEXT';
+    public const TYPE_INDEX = 'INDEX';
+    public const TYPE_PRIMARY = 'PRIMARY';
+    public const TYPE_UNIQUE = 'UNIQUE';
+    public const TYPE_FULLTEXT = 'FULLTEXT';
 
     /** @var list<IndexColumnDefinition> */
     private array $columns = [];
@@ -28,9 +28,10 @@ class IndexDefinition implements Statement
     /**
      * @throws OutOfRangeException
      */
-    public function addColumn(string $column, string $order = IndexColumnDefinition::ASC, ?int $length = NULL): static
+    public function addColumn(string $column, string $order = IndexColumnDefinition::ASC, ?int $length = null): static
     {
         $this->columns[] = new IndexColumnDefinition($column, $order, $length);
+
         return $this;
     }
 
@@ -56,17 +57,16 @@ class IndexDefinition implements Statement
         $output = $this->type !== self::TYPE_INDEX ? ($this->type . ' ') : '';
         $output .= 'KEY';
 
-        if ($this->name !== NULL) {
+        if ($this->name !== null) {
             $output .= ' ' . $driver->escapeIdentifier($this->name);
         }
 
         $output .= ' (';
-        $isFirst = TRUE;
+        $isFirst = true;
 
         foreach ($this->columns as $column) {
             if ($isFirst) {
-                $isFirst = FALSE;
-
+                $isFirst = false;
             } else {
                 $output .= ', ';
             }
@@ -75,6 +75,7 @@ class IndexDefinition implements Statement
         }
 
         $output .= ')';
+
         return $output;
     }
 }

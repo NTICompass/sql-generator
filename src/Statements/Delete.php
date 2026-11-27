@@ -20,8 +20,7 @@ class Delete implements PreparedStatement
         private string|TableName $tableName,
         array $where,
         bool $preparedStatements = false,
-    )
-    {
+    ) {
         $this->tableName = Helpers::createTableName($tableName);
         $this->whereData = new Where($where, preparedStatements: $preparedStatements);
     }

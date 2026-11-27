@@ -8,6 +8,8 @@ use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\InvalidArgumentException;
 use CzProject\SqlGenerator\PreparedStatement;
 
+use function sprintf;
+
 class Where implements PreparedStatement
 {
     /**
@@ -18,8 +20,8 @@ class Where implements PreparedStatement
         private string $statement = 'WHERE',
         private string $separator = ' AND ',
         private bool $preparedStatements = false,
-    )
-    {}
+    ) {
+    }
 
     /**
      * @param array<array-key, mixed | self> $data
@@ -34,18 +36,17 @@ class Where implements PreparedStatement
      */
     public function toSql(Driver $driver): string
     {
-        return trim($this->statement . ' ' .  Helpers::key_value_to_string(
-            function (string | int $field, mixed $value) use($driver): string {
+        return trim($this->statement . ' ' . Helpers::key_value_to_string(
+            function (string|int $field, mixed $value) use ($driver): string {
                 if ($value instanceof self) {
                     return '(' . $value->toSql($driver) . ')';
                 }
-                else {
-                    return sprintf(
-                        '%s = %s',
-                        $driver->escapeIdentifier($field),
-                        $this->preparedStatements ? '?' : Helpers::formatValue($value, $driver),
-                    );
-                }
+
+                return sprintf(
+                    '%s = %s',
+                    $driver->escapeIdentifier($field),
+                    $this->preparedStatements ? '?' : Helpers::formatValue($value, $driver),
+                );
             },
             $this->data,
             $this->separator,
@@ -59,8 +60,7 @@ class Where implements PreparedStatement
         foreach ($this->data as $param) {
             if ($param instanceof self) {
                 array_push($ret, ...$param->getParams());
-            }
-            else {
+            } else {
                 $ret[] = Helpers::formatValueForPrepared($param);
             }
         }

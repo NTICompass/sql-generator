@@ -27,6 +27,7 @@ class TableName
     public static function create(string $name): self
     {
         $parts = explode('.', $name);
+
         return new self(...$parts);
     }
 }

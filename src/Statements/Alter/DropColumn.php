@@ -9,7 +9,8 @@ use CzProject\SqlGenerator\Statement;
 class DropColumn implements Statement
 {
     public function __construct(private string $column)
-    {}
+    {
+    }
 
     public function toSql(Driver $driver): string
     {

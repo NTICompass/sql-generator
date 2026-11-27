@@ -5,7 +5,7 @@ declare(strict_types=1);
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
 
-return (new Config())
+return (new Config)
     ->setRiskyAllowed(true)
     ->setRules([
         '@auto' => true,
@@ -21,12 +21,13 @@ return (new Config())
             'import_constants' => true,
             'import_functions' => true,
         ],
+        'new_with_parentheses' => ['named_class' => false],
         'yoda_style' => ['identical' => false],
     ])
     ->setFinder(
         (new Finder)
             ->in(__DIR__ . '/src')
-            ->append([__DIR__ . '/tests'])
+            ->append([__DIR__ . '/tests', __DIR__ . '/.php-cs-fixer.dist.php'])
             ->notPath('vendor')
             ->name(['*.php', '*.phpt'])
             ->ignoreVCS(true)

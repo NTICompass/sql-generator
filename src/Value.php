@@ -13,9 +13,8 @@ class Value
      */
     public function __construct(
         private int|float|bool|string|Stringable|DateTimeInterface $value,
-    )
-    {}
-
+    ) {
+    }
 
     /**
      * @throws InvalidArgumentException
@@ -24,7 +23,6 @@ class Value
     {
         return Helpers::formatValue($this->value, $driver);
     }
-
 
     /**
      * @param scalar|Stringable|DateTimeInterface $value

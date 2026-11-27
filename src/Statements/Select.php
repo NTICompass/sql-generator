@@ -10,6 +10,9 @@ use CzProject\SqlGenerator\InvalidArgumentException;
 use CzProject\SqlGenerator\PreparedStatement;
 use CzProject\SqlGenerator\TableName;
 
+use function is_int;
+use function is_string;
+
 require_once __DIR__ . '/../../vendor/autoload.php'; // We're using `array_is_list` which is PHP 8.1+
 
 /**
@@ -21,17 +24,13 @@ class Select implements PreparedStatement
     private ?Where $whereData;
 
     /**
-     * @param array<array-key, string | self> $fields
+     * @param array<array-key, string | self>             $fields
      * @param array<array-key, string | TableName | self> $tables
-     * @param Join[] $join
-     * @param array<array-key, mixed | Where> $where
-     * @param list<string> $group
-     * @param array<array-key, mixed | Where> $having
-     * @param list<Order> $order
-     * @param int $limit
-     * @param int $offset
-     * @param bool $distinct
-     * @param bool $preparedStatements
+     * @param Join[]                                      $join
+     * @param array<array-key, mixed | Where>             $where
+     * @param list<string>                                $group
+     * @param array<array-key, mixed | Where>             $having
+     * @param list<Order>                                 $order
      */
     public function __construct(
         private array $fields = ['*'],
@@ -45,48 +44,52 @@ class Select implements PreparedStatement
         public int $offset = 0,
         public bool $distinct = false,
         bool $preparedStatements = false,
-    )
-    {
+    ) {
         $this->whereData = $where !== [] ? new Where($where, preparedStatements: $preparedStatements) : null;
     }
 
     /**
-     * @param string|TableName $table
-     * @param array<array-key, mixed | Where> | list<string> $on
-     * @param 'inner' | 'left' | null $type
+     * @param array<array-key, mixed | Where>|list<string> $on
+     * @param 'inner'|'left'|null                          $type
+     *
      * @return $this
      */
     public function addJoin(string|TableName $table, array $on, ?string $type = null): self
     {
         $this->join[] = [$table, $on, $type];
+
         return $this;
     }
 
     public function addGroup(string $group): self
     {
         $this->group[] = $group;
+
         return $this;
     }
 
     /**
-     * @param string $order
-     * @param 'asc' | 'desc' | null $dir
+     * @param 'asc'|'desc'|null $dir
+     *
      * @return $this
      */
     public function addOrder(string $order, ?string $dir = null): self
     {
         $this->order[] = [$order, $dir];
+
         return $this;
     }
 
     /**
-     * @param array-key $field
-     * @param mixed | Where $value
+     * @param array-key   $field
+     * @param mixed|Where $value
+     *
      * @return $this
      */
     public function addHaving(string|int $field, mixed $value): self
     {
         $this->having[$field] = $value;
+
         return $this;
     }
 
@@ -98,15 +101,13 @@ class Select implements PreparedStatement
         $select = $this->distinct ? 'SELECT DISTINCT' : 'SELECT';
 
         $fields = Helpers::key_value_to_string(
-            static fn (int | string $alias, string | self $value): string =>
-                (is_string($value) ? $value : '(' . $value->toSql($driver) . ')') .
+            static fn (int|string $alias, string|self $value): string => (is_string($value) ? $value : '(' . $value->toSql($driver) . ')') .
                 (!is_int($alias) ? ' AS ' . $driver->escapeIdentifier($alias) : ''),
             $this->fields,
         );
 
         $fromData = Helpers::key_value_to_string(
-            static fn (int | string $alias, string | TableName | self $value): string =>
-                ((is_string($value) || $value instanceof TableName) ? Helpers::escapeTableName(Helpers::createTableName($value), $driver) : '(' . $value->toSql($driver) . ')') .
+            static fn (int|string $alias, string|TableName|self $value): string => ((is_string($value) || $value instanceof TableName) ? Helpers::escapeTableName(Helpers::createTableName($value), $driver) : '(' . $value->toSql($driver) . ')') .
                 (!is_int($alias) ? ' AS ' . $driver->escapeIdentifier($alias) : ''),
             $this->tables,
         );
@@ -115,9 +116,10 @@ class Select implements PreparedStatement
         $join = Helpers::key_value_to_string(
             /**
              * @param Join $value
+             *
              * @throws InvalidArgumentException
              */
-            static function (int | string $alias, array $value) use ($driver): string {
+            static function (int|string $alias, array $value) use ($driver): string {
                 $type = strtoupper($value[2] ?? '') . ' JOIN';
                 $table = (is_string($value[0]) || $value[0] instanceof TableName) ? Helpers::escapeTableName(Helpers::createTableName($value[0]), $driver) : '(' . $value[0]->toSql($driver) . ')';
                 $as = !is_int($alias) ? ' AS ' . $driver->escapeIdentifier($alias) : '';
@@ -125,8 +127,7 @@ class Select implements PreparedStatement
                 if (array_is_list($value[1])) {
                     // @phpstan-ignore argument.type (`array_map()` expects `callable(mixed): mixed`, not `Closure(string): string`)
                     $clause = ' USING(' . implode(', ', array_map(Closure::fromCallable([$driver, 'escapeIdentifier']), $value[1])) . ')';
-                }
-                else {
+                } else {
                     $clause = (new Where($value[1], 'ON'))->toSql($driver);
                 }
 

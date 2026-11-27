@@ -3,15 +3,14 @@ declare(strict_types=1);
 
 namespace CzProject\SqlGenerator\Statements;
 
+use CzProject\SqlGenerator\Driver;
 use CzProject\SqlGenerator\DuplicateException;
 use CzProject\SqlGenerator\Helpers;
-use CzProject\SqlGenerator\Driver;
 use CzProject\SqlGenerator\InvalidArgumentException;
-use CzProject\SqlGenerator\Statement;
 use CzProject\SqlGenerator\OutOfRangeException;
+use CzProject\SqlGenerator\Statement;
 use CzProject\SqlGenerator\TableName;
 use CzProject\SqlGenerator\Value;
-
 
 class CreateTable implements Statement
 {
@@ -29,20 +28,18 @@ class CreateTable implements Statement
     /** @var array<string, string|Value>  [name => value] */
     private array $options = [];
 
-    /**
-     * @param string|TableName $tableName
-     */
     public function __construct(private string|TableName $tableName)
     {
         $this->tableName = Helpers::createTableName($tableName);
     }
 
     /**
-     * @param array<int|float|string>|NULL $parameters
-     * @param array<string, string|Value|NULL> $options
+     * @param array<int|float|string>|null     $parameters
+     * @param array<string, string|Value|null> $options
+     *
      * @throws DuplicateException
      */
-    public function addColumn(string $name, string $type, ?array $parameters = NULL, array $options = []): ColumnDefinition
+    public function addColumn(string $name, string $type, ?array $parameters = null, array $options = []): ColumnDefinition
     {
         if (isset($this->columns[$name])) {
             throw new DuplicateException("Column '$name' already exists.");
@@ -66,6 +63,7 @@ class CreateTable implements Statement
     /**
      * @param string|string[] $columns
      * @param string|string[] $targetColumns
+     *
      * @throws DuplicateException
      */
     public function addForeignKey(string $name, array|string $columns, string|TableName $targetTable, array|string $targetColumns): ForeignKeyDefinition
@@ -80,15 +78,16 @@ class CreateTable implements Statement
     public function setComment(?string $comment): static
     {
         $this->comment = $comment;
+
         return $this;
     }
 
     public function setOption(string $name, string|Value $value): static
     {
         $this->options[$name] = $value;
+
         return $this;
     }
-
 
     /**
      * @throws InvalidArgumentException
@@ -98,12 +97,11 @@ class CreateTable implements Statement
         $output = 'CREATE TABLE ' . Helpers::escapeTableName($this->tableName, $driver) . " (\n";
 
         // columns
-        $isFirst = TRUE;
+        $isFirst = true;
 
         foreach ($this->columns as $column) {
             if ($isFirst) {
-                $isFirst = FALSE;
-
+                $isFirst = false;
             } else {
                 $output .= ",\n";
             }
@@ -113,8 +111,7 @@ class CreateTable implements Statement
 
         foreach ($this->indexes as $index) {
             if ($isFirst) {
-                $isFirst = FALSE;
-
+                $isFirst = false;
             } else {
                 $output .= ",\n";
             }
@@ -124,8 +121,7 @@ class CreateTable implements Statement
 
         foreach ($this->foreignKeys as $foreignKey) {
             if ($isFirst) {
-                $isFirst = FALSE;
-
+                $isFirst = false;
             } else {
                 $output .= ",\n";
             }
@@ -146,6 +142,7 @@ class CreateTable implements Statement
         }
 
         $output .= ';';
+
         return $output;
     }
 }

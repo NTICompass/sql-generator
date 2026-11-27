@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace CzProject\SqlGenerator\Statements;
 
-use CzProject\SqlGenerator\OutOfRangeException;
 use CzProject\SqlGenerator\Driver;
+use CzProject\SqlGenerator\OutOfRangeException;
 use CzProject\SqlGenerator\Statement;
 
 class IndexColumnDefinition implements Statement
 {
-    const ASC = 'ASC';
-    const DESC = 'DESC';
+    public const ASC = 'ASC';
+    public const DESC = 'DESC';
 
     /**
      * @throws OutOfRangeException
@@ -18,9 +18,8 @@ class IndexColumnDefinition implements Statement
     public function __construct(
         private string $name,
         private string $order = self::ASC,
-        private ?int $length = NULL,
-    )
-    {
+        private ?int $length = null,
+    ) {
         $this->setOrder($order);
     }
 
@@ -40,7 +39,7 @@ class IndexColumnDefinition implements Statement
     {
         $output = $driver->escapeIdentifier($this->name);
 
-        if ($this->length !== NULL) {
+        if ($this->length !== null) {
             $output .= ' (' . $this->length . ')';
         }
 

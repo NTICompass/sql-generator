@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace CzProject\SqlGenerator\Statements;
 
+use CzProject\SqlGenerator\Driver;
 use CzProject\SqlGenerator\Drivers;
 use CzProject\SqlGenerator\Helpers;
-use CzProject\SqlGenerator\Driver;
 use CzProject\SqlGenerator\InvalidArgumentException;
 use CzProject\SqlGenerator\Statement;
 use CzProject\SqlGenerator\Value;
@@ -15,49 +15,52 @@ class ColumnDefinition implements Statement
     /** @var array<int|float|string> */
     private array $parameters = [];
 
-    private bool $nullable = FALSE;
+    private bool $nullable = false;
 
     private mixed $defaultValue;
 
-    private bool $autoIncrement = FALSE;
+    private bool $autoIncrement = false;
 
     private ?string $comment;
 
     /**
-     * @param array<int|float|string>|null $parameters
-     * @param array<string, string|Value|null> $options  [name => value]
+     * @param array<int|float|string>|null     $parameters
+     * @param array<string, string|Value|null> $options    [name => value]
      */
     public function __construct(
         private string $name,
         private string $type,
         ?array $parameters = null,
         private array $options = [],
-    )
-    {
+    ) {
         $this->parameters = $parameters !== null ? $parameters : [];
     }
 
     public function setNullable(bool $nullable = true): static
     {
         $this->nullable = $nullable;
+
         return $this;
     }
 
     public function setDefaultValue(mixed $defaultValue): static
     {
         $this->defaultValue = $defaultValue;
+
         return $this;
     }
 
     public function setAutoIncrement(bool $autoIncrement = true): static
     {
         $this->autoIncrement = $autoIncrement;
+
         return $this;
     }
 
     public function setComment(?string $comment): static
     {
         $this->comment = $comment;
+
         return $this;
     }
 
@@ -70,7 +73,7 @@ class ColumnDefinition implements Statement
 
         if ($this->parameters !== []) {
             $parameters = $this->parameters;
-            array_walk($parameters, function (&$value) use ($driver) {
+            array_walk($parameters, static function (&$value) use ($driver) {
                 $value = Helpers::formatValue($value, $driver);
             });
             $output .= '(' . implode(', ', $parameters) . ')';
@@ -123,6 +126,6 @@ class ColumnDefinition implements Statement
             $value = $value->toString($driver);
         }
 
-        return $name . ($value !== NULL ? (' ' . $value) : '');
+        return $name . ($value !== null ? (' ' . $value) : '');
     }
 }

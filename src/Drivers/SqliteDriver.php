@@ -27,17 +27,17 @@ class SqliteDriver implements Driver
 
     public function escapeIdentifier(string $value): string
     {
-        return '"'.str_replace('"', '""', $value).'"';
+        return '"' . str_replace('"', '""', $value) . '"';
     }
 
     public function escapeText(string $value): string
     {
-        return "'".SQLite3::escapeString($value)."'";
+        return "'" . SQLite3::escapeString($value) . "'";
     }
 
     public function escapeBool(bool $value): string
     {
-        return strval($value ? 1 : 0);
+        return (string)($value ? 1 : 0);
     }
 
     public function escapeDate(DateTimeInterface|string $value): string

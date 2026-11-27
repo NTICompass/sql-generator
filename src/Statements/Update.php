@@ -16,7 +16,7 @@ class Update implements PreparedStatement
     private Where $whereData;
 
     /**
-     * @param array<string, mixed> $data
+     * @param array<string, mixed>            $data
      * @param array<array-key, mixed | Where> $where
      */
     public function __construct(
@@ -24,8 +24,7 @@ class Update implements PreparedStatement
         private array $data,
         private array $where,
         bool $preparedStatements = false,
-    )
-    {
+    ) {
         $this->tableName = Helpers::createTableName($tableName);
         $this->inputData = new Where($this->data, 'SET', ', ', preparedStatements: $preparedStatements);
         $this->whereData = new Where($this->where, preparedStatements: $preparedStatements);

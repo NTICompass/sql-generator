@@ -5,6 +5,11 @@ namespace CzProject\SqlGenerator;
 
 use DateTimeInterface;
 
+use function is_bool;
+use function is_float;
+use function is_int;
+use function is_string;
+
 class Helpers
 {
     /**
@@ -17,37 +22,33 @@ class Helpers
 
     /**
      * @throws InvalidArgumentException
+     *
      * @see https://api.dibiphp.com/3.0/source-Dibi.Translator.php.html#174
      */
     public static function formatValue(mixed $value, Driver $driver): string
     {
         if (is_string($value)) {
             return $driver->escapeText($value);
-        }
-        elseif (is_int($value)) {
+        } elseif (is_int($value)) {
             return (string)$value;
-        }
-        elseif (is_float($value)) {
+        } elseif (is_float($value)) {
             return rtrim(rtrim(number_format($value, 10, '.', ''), '0'), '.');
-        }
-        elseif (is_bool($value)) {
+        } elseif (is_bool($value)) {
             return $driver->escapeBool($value);
-        }
-        elseif ($value === NULL) {
+        } elseif ($value === null) {
             return 'NULL';
-        }
-        elseif ($value instanceof DateTimeInterface) {
+        } elseif ($value instanceof DateTimeInterface) {
             return $driver->escapeDateTime($value);
         }
 
-        throw new InvalidArgumentException("Unsupported value type.");
+        throw new InvalidArgumentException('Unsupported value type.');
     }
 
-    public static function formatValueForPrepared(mixed $value): mixed {
+    public static function formatValueForPrepared(mixed $value): mixed
+    {
         if (is_bool($value)) {
             return $value ? 1 : 0;
-        }
-        elseif ($value instanceof DateTimeInterface) {
+        } elseif ($value instanceof DateTimeInterface) {
             return $value->format('Y-m-d H:i:s');
         }
 
@@ -80,12 +81,12 @@ class Helpers
     /**
      * @template V
      * @template K of array-key
+     *
      * @param callable(K $key, V $value): string $cb
-     * @param array<K, V> $data
-     * @param string $separator
-     * @return string
+     * @param array<K, V>                        $data
      */
-    public static function key_value_to_string(callable $cb, array $data, string $separator = ', '): string {
+    public static function key_value_to_string(callable $cb, array $data, string $separator = ', '): string
+    {
         /** @var string[] $output */
         $output = [];
 

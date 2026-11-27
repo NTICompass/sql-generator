@@ -3,19 +3,20 @@ declare(strict_types=1);
 
 namespace CzProject\SqlGenerator\Statements;
 
+use CzProject\SqlGenerator\Driver;
 use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\OutOfRangeException;
-use CzProject\SqlGenerator\Driver;
 use CzProject\SqlGenerator\Statement;
 use CzProject\SqlGenerator\TableName;
 
+use function is_array;
 
 class ForeignKeyDefinition implements Statement
 {
-    const ACTION_RESTRICT = 'RESTRICT';
-    const ACTION_NO_ACTION = 'NO ACTION';
-    const ACTION_CASCADE = 'CASCADE';
-    const ACTION_SET_NULL = 'SET NULL';
+    public const ACTION_RESTRICT = 'RESTRICT';
+    public const ACTION_NO_ACTION = 'NO ACTION';
+    public const ACTION_CASCADE = 'CASCADE';
+    public const ACTION_SET_NULL = 'SET NULL';
 
     /** @var list<string> */
     private array $columns;
@@ -36,8 +37,7 @@ class ForeignKeyDefinition implements Statement
         array|string $columns,
         private string|TableName $targetTable,
         array|string $targetColumns,
-    )
-    {
+    ) {
         $this->targetTable = Helpers::createTableName($targetTable);
 
         foreach (is_array($columns) ? $columns : [$columns] as $column) {
@@ -49,7 +49,6 @@ class ForeignKeyDefinition implements Statement
         }
     }
 
-
     /**
      * @throws OutOfRangeException
      */
@@ -60,9 +59,9 @@ class ForeignKeyDefinition implements Statement
         }
 
         $this->onUpdateAction = $onUpdateAction;
+
         return $this;
     }
-
 
     /**
      * @throws OutOfRangeException
@@ -74,9 +73,9 @@ class ForeignKeyDefinition implements Statement
         }
 
         $this->onDeleteAction = $onDeleteAction;
+
         return $this;
     }
-
 
     public function toSql(Driver $driver): string
     {
@@ -88,6 +87,7 @@ class ForeignKeyDefinition implements Statement
         $output .= ')';
         $output .= ' ON DELETE ' . $this->onDeleteAction;
         $output .= ' ON UPDATE ' . $this->onUpdateAction;
+
         return $output;
     }
 

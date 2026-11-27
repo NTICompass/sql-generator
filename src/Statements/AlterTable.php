@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace CzProject\SqlGenerator\Statements;
 
-use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\Driver;
+use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\InvalidArgumentException;
-use CzProject\SqlGenerator\Statement;
 use CzProject\SqlGenerator\OutOfRangeException;
+use CzProject\SqlGenerator\Statement;
 use CzProject\SqlGenerator\TableName;
 use CzProject\SqlGenerator\Value;
 
@@ -37,10 +37,10 @@ class AlterTable implements Statement
     }
 
     /**
-     * @param array<int|float|string> $parameters
-     * @param array<string, string|Value|NULL> $options  [name => value]
+     * @param array<int|float|string>          $parameters
+     * @param array<string, string|Value|null> $options    [name => value]
      */
-    public function addColumn(string $name, string $type, ?array $parameters = NULL, array $options = []): AddColumn
+    public function addColumn(string $name, string $type, ?array $parameters = null, array $options = []): AddColumn
     {
         return $this->statements[] = new AddColumn($name, $type, $parameters, $options);
     }
@@ -51,10 +51,10 @@ class AlterTable implements Statement
     }
 
     /**
-     * @param array<int|float|string> $parameters
-     * @param array<string, string|Value|NULL> $options  [name => value]
+     * @param array<int|float|string>          $parameters
+     * @param array<string, string|Value|null> $options    [name => value]
      */
-    public function modifyColumn(string $name, string $type, ?array $parameters = NULL, array $options = []): ModifyColumn
+    public function modifyColumn(string $name, string $type, ?array $parameters = null, array $options = []): ModifyColumn
     {
         return $this->statements[] = new ModifyColumn($name, $type, $parameters, $options);
     }
@@ -89,12 +89,14 @@ class AlterTable implements Statement
     public function setComment(?string $comment): static
     {
         $this->comment = $comment;
+
         return $this;
     }
 
     public function setOption(string $name, string|Value $value): static
     {
         $this->options[$name] = $value;
+
         return $this;
     }
 
@@ -108,12 +110,11 @@ class AlterTable implements Statement
         }
 
         $output = 'ALTER TABLE ' . Helpers::escapeTableName($this->tableName, $driver) . "\n";
-        $isFirst = TRUE;
+        $isFirst = true;
 
         foreach ($this->statements as $statement) {
             if ($isFirst) {
-                $isFirst = FALSE;
-
+                $isFirst = false;
             } else {
                 $output .= ",\n";
             }
@@ -123,8 +124,7 @@ class AlterTable implements Statement
 
         if (isset($this->comment)) {
             if ($isFirst) {
-                $isFirst = FALSE;
-
+                $isFirst = false;
             } else {
                 $output .= ",\n";
             }
@@ -134,8 +134,7 @@ class AlterTable implements Statement
 
         foreach ($this->options as $optionName => $optionValue) {
             if ($isFirst) {
-                $isFirst = FALSE;
-
+                $isFirst = false;
             } else {
                 $output .= ",\n";
             }
@@ -144,6 +143,7 @@ class AlterTable implements Statement
         }
 
         $output .= ';';
+
         return $output;
     }
 }

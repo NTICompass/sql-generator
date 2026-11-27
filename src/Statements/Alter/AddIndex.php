@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace CzProject\SqlGenerator\Statements;
 
 use CzProject\SqlGenerator\Driver;
-use CzProject\SqlGenerator\Statement;
 use CzProject\SqlGenerator\NotImplementedException;
 use CzProject\SqlGenerator\OutOfRangeException;
+use CzProject\SqlGenerator\Statement;
 
 class AddIndex implements Statement
 {
@@ -20,9 +20,10 @@ class AddIndex implements Statement
         $this->definition = new IndexDefinition($name, $type);
     }
 
-    public function addColumn(string $column, string $order = IndexColumnDefinition::ASC, ?int $length = NULL): static
+    public function addColumn(string $column, string $order = IndexColumnDefinition::ASC, ?int $length = null): static
     {
         $this->definition->addColumn($column, $order, $length);
+
         return $this;
     }
 
@@ -34,8 +35,7 @@ class AddIndex implements Statement
         if ($driver->supportsColumnModify()) {
             return 'ADD ' . $this->definition->toSql($driver);
         }
-        else {
-            throw new NotImplementedException('Add key is not implemented for driver ' . get_class($driver) . '.');
-        }
+
+        throw new NotImplementedException('Add key is not implemented for driver ' . $driver::class . '.');
     }
 }
