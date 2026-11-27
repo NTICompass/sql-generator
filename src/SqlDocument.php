@@ -122,6 +122,16 @@ class SqlDocument
         return $statement;
     }
 
+    /**
+     * @param array<string, string> $where
+     */
+    public function delete(string|TableName $tableName, array $where, bool $preparedStatements = false): Statements\Delete
+    {
+        $statement = new Statements\Delete($tableName, $where, preparedStatements: $preparedStatements);
+        $this->addStatement($statement);
+        return $statement;
+    }
+
     public function createTable(string|TableName $tableName): Statements\CreateTable
     {
         $statement = new Statements\CreateTable($tableName);
