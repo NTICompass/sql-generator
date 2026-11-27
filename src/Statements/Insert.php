@@ -6,15 +6,19 @@ namespace CzProject\SqlGenerator\Statements;
 use CzProject\SqlGenerator\Helpers;
 use CzProject\SqlGenerator\Driver;
 use CzProject\SqlGenerator\InvalidArgumentException;
-use CzProject\SqlGenerator\Statement;
+use CzProject\SqlGenerator\PreparedStatement;
 use CzProject\SqlGenerator\TableName;
 
-class Insert implements Statement
+class Insert implements PreparedStatement
 {
     /**
      * @param array<string, mixed> $data
      */
-    public function __construct(private string|TableName $tableName, private array $data)
+    public function __construct(
+        private string|TableName $tableName,
+        private array $data,
+        private bool $preparedStatements = false,
+    )
     {
         $this->tableName = Helpers::createTableName($tableName);
     }
@@ -27,11 +31,15 @@ class Insert implements Statement
         try {
             $tableName = Helpers::escapeTableName($this->tableName, $driver);
             $fields = implode(', ', array_map(static fn (string $field) => $driver->escapeIdentifier($field), array_keys($this->data)));
-            $values = implode(', ', array_map(static fn (mixed $value) => Helpers::formatValue($value, $driver), array_values($this->data)));
+            $values = implode(', ', array_map(fn (mixed $value) => $this->preparedStatements ? '?' : Helpers::formatValue($value, $driver), array_values($this->data)));
 
             return "INSERT INTO $tableName ($fields) VALUES ($values);";
         } catch (InvalidArgumentException $e) {
             throw new InvalidArgumentException('Error creating UPDATE query.', previous: $e);
         }
+    }
+
+    public function getParams(): array {
+        return array_values($this->data);
     }
 }

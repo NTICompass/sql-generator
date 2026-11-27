@@ -24,3 +24,25 @@ test(static function () {
         VALUES ('Harry', 'Potter', 0, '2016-12-31 16:12:31', NULL);
     SQL), normalize($sql->toSql($driver)));
 });
+
+test(static function () {
+    $sql = new SqlDocument;
+    $driver = new Drivers\MysqlDriver;
+
+    $date = new DateTime('2016-12-31 16:12:31', new DateTimeZone('UTC'));
+
+    $sql->insert('contact', [
+        'name' => 'Harry',
+        'surname' => 'Potter',
+        'active' => FALSE,
+        'created' => $date,
+        'removed' => NULL,
+    ], preparedStatements: true);
+
+    Assert::same(normalize(<<<'SQL'
+        INSERT INTO `contact` (`name`, `surname`, `active`, `created`, `removed`)
+        VALUES (?, ?, ?, ?, ?);
+    SQL), normalize($sql->toSql($driver)));
+
+    Assert::same(['Harry', 'Potter', false, $date, null], $sql->getParams());
+});
