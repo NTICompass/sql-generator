@@ -24,8 +24,9 @@ class Where implements PreparedStatement
     /**
      * @param array<array-key, mixed | self> $data
      */
-    public static function nestedWhere(array $data, string $separator = ' OR ', bool $preparedStatements = false): self {
-        return new self($data, '', $separator, $preparedStatements);
+    public static function nestedWhere(array $data, string $separator = ' OR ', bool $preparedStatements = false): self
+    {
+        return new self($data, '', $separator, preparedStatements: $preparedStatements);
     }
 
     /**
@@ -51,7 +52,8 @@ class Where implements PreparedStatement
         ));
     }
 
-    public function getParams(): array {
+    public function getParams(): array
+    {
         $ret = [];
 
         foreach ($this->data as $param) {

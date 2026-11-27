@@ -47,7 +47,8 @@ class SqlDocument
     /**
      * @return list<mixed>
      */
-    public function getParams(): array {
+    public function getParams(): array
+    {
         $ret = [];
 
         foreach ($this->statements as $statement) {

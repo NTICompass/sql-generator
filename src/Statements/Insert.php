@@ -52,7 +52,8 @@ class Insert implements PreparedStatement
         }
     }
 
-    public function getParams(): array {
+    public function getParams(): array
+    {
         return array_map(Closure::fromCallable([Helpers::class, 'formatValueForPrepared']), array_values($this->data));
     }
 }

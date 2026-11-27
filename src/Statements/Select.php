@@ -56,12 +56,14 @@ class Select implements PreparedStatement
      * @param 'inner' | 'left' | null $type
      * @return $this
      */
-    public function addJoin(string|TableName $table, array $on, ?string $type = null): self {
+    public function addJoin(string|TableName $table, array $on, ?string $type = null): self
+    {
         $this->join[] = [$table, $on, $type];
         return $this;
     }
 
-    public function addGroup(string $group): self {
+    public function addGroup(string $group): self
+    {
         $this->group[] = $group;
         return $this;
     }
@@ -71,7 +73,8 @@ class Select implements PreparedStatement
      * @param 'asc' | 'desc' | null $dir
      * @return $this
      */
-    public function addOrder(string $order, ?string $dir = null): self {
+    public function addOrder(string $order, ?string $dir = null): self
+    {
         $this->order[] = [$order, $dir];
         return $this;
     }
@@ -81,7 +84,8 @@ class Select implements PreparedStatement
      * @param mixed | Where $value
      * @return $this
      */
-    public function addHaving(string|int $field, mixed $value): self {
+    public function addHaving(string|int $field, mixed $value): self
+    {
         $this->having[$field] = $value;
         return $this;
     }
@@ -153,7 +157,8 @@ class Select implements PreparedStatement
         return trim("$select $fields $from $join $where $group $having $order $limit $offset") . ';';
     }
 
-    public function getParams(): array {
+    public function getParams(): array
+    {
         return $this->whereData?->getParams() ?? [];
     }
 }
