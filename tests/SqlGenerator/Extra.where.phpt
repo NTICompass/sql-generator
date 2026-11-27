@@ -22,7 +22,7 @@ test(static function () {
         ]),
     ]);
 
-    Assert::same("WHERE `name` = 'Testing' AND (`key` = 123 OR `other_key` = 465)", normalize($where->toSql(new MysqlDriver())));
+    Assert::same("WHERE `name` = 'Testing' AND (`key` = 123 OR `other_key` = 456)", normalize($where->toSql(new MysqlDriver())));
 });
 
 test(static function () {
