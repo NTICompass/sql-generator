@@ -14,8 +14,6 @@ class SqliteDriver implements Driver
 {
     use DateParserTrait;
 
-    public bool $modifyColumn = false;
-
     /**
      * @var string[]
      */
